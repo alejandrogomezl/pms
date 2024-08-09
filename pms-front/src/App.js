@@ -5,6 +5,11 @@ import ApartmentDetails from './components/ApartmentDetails';
 import ReservationForm from './components/ReservationForm';
 import Home from './pages/Home';
 import ApartmentPage from './pages/ApartmentPage';
+//Bootstrap
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './custom.scss';
+
 
 function App() {
   return (
