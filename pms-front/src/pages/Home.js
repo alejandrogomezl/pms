@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import DateSelector from '../components/DateSelector';
 import ApartmentList from '../components/ApartmentList';
+import NavBar from '../components/NavBar';
 
 const Home = () => {
   const [apartments, setApartments] = useState([]);
@@ -23,6 +24,7 @@ const Home = () => {
 
   return (
     <div>
+      <NavBar />
       <DateSelector onDatesChange={handleDatesChange} />
       <ApartmentList apartments={apartments} />
     </div>

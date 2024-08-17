@@ -16,6 +16,11 @@ body {
   font-family: $font-stack;
   margin: 0;
   padding: 0;
+  //background-image: url('./img/fondo.jpg');
+  background-size: cover; /* Hace que la imagen cubra toda la ventana */
+  background-position: center; /* Centra la imagen */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  height: 100vh;
 }
 
 // Configuración de encabezados

@@ -1,0 +1,73 @@
+// Variables
+$primary-color: #2C3E50;
+$secondary-color: #f5f5f5;
+$button-color: #000000;
+$nav-background-color: #ecf0f1;
+
+// Estilos para el contenedor principal
+.date-selector-container {
+  display: flex;
+  margin-top: 10%;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  //background-color: $secondary-color;
+  border-radius: 10px;
+  //box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+// Estilos para la barra de navegación después de enviar el formulario
+.date-selector-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: $nav-background-color;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  gap: 15px;
+}
+
+// Estilos generales para formularios
+.date-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: $primary-color;
+}
+
+.form-control {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid $primary-color;
+  font-size: 14px;
+  color: $primary-color;
+  width: 100%;
+}
+
+.date-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid $primary-color;
+  font-size: 14px;
+  color: $primary-color;
+}
+
+.search-button {
+  background-color: $button-color;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: darken($button-color, 10%);
+}

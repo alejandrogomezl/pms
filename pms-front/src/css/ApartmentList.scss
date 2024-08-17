@@ -1,0 +1,129 @@
+
+
+// .apartment-list {
+//     display: flex;
+//     flex-direction: column;
+  
+//     .apartment-item {
+//       display: flex;
+//       align-items: center;  // Centra los elementos verticalmente
+//       margin-bottom: 20px;  // Espacio entre los ítems
+  
+//       .apartment-image {
+//         width: 150px;      // Tamaño fijo para la imagen, ajusta según necesites
+//         height: 100px;     // Altura fija, ajusta según necesites
+//         margin-right: 20px;  // Espacio entre la imagen y la información del apartamento
+//         object-fit: cover; // Asegura que la imagen cubra todo el espacio sin deformarse
+//       }
+  
+//       .apartment-info {
+//         flex: 1;  // Ocupa el espacio restante
+//         h2 {
+//           color: #333;  // Color oscuro para el título
+//         }
+  
+//         .details-link {
+//           font-size: 1rem;
+//             border-radius: 0.25rem;
+//             padding: 0.5rem 1rem;
+//             line-height: 1.5;
+//             background-color: #007bff;  // Ejemplo de color azul
+//             color: #fff;  // Texto blanco
+//             text-decoration: none;
+//           }
+//         }
+//     }
+//   }
+
+.apartment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 30px;
+  margin-right: 30px;
+  margin-left: 30px;
+}
+
+.apartment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f5f5; /* Fondo claro */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 10px; /* Bordes redondeados */
+  overflow: hidden; /* Esconder el desbordamiento */
+  padding: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+  height: 300px;
+}
+
+.apartment-image-container {
+  flex: 1;
+  max-width: 30%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.apartment-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.apartment-info {
+  flex: 2;
+  padding: 0 20px;
+  color: #2C3E50; /* Color de texto oscuro */
+}
+
+.apartment-info h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #112955
+}
+
+.apartment-info p {
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.apartment-price-reserve {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.apartment-price {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.apartment-price span {
+  display: block;
+  font-size: 16px;
+  color: #2C3E50;
+}
+
+.apartment-price .price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2C3E50;
+}
+
+.reserve-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2C3E50;
+  border-radius: 20px;
+  color: #2C3E50;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: #2C3E50;
+  color: #fff;
+}
