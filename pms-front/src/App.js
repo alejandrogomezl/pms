@@ -4,7 +4,7 @@ import ApartmentList from './components/ApartmentList'; // Suponiendo que tienes
 import ApartmentDetails from './components/ApartmentDetails';
 import ReservationForm from './components/ReservationForm';
 import Home from './pages/Home';
-import ApartmentPage from './pages/ApartmentPage';
+import ApartmentDetailsPage from './pages/ApartmentDetailsPage';
 import NavBar from './components/NavBar';
 //Bootstrap
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -17,9 +17,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/apartments/:id" element={<ApartmentPage />} />
+        <Route path="/apartments/:id" element={<ApartmentDetailsPage />} />
         <Route path="/" element={<ApartmentList />} />
-        <Route path="/apartments/:id" element={<ApartmentDetails />} />
+        <Route path="/apartments/:id" element={<ApartmentDetailsPage />} />
         <Route path="/reserve/:id" element={<ReservationForm />} />
       </Routes>
     </Router>

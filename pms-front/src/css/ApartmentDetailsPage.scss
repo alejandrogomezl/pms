@@ -1,0 +1,41 @@
+.apartment-details-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f7f6; /* Color de fondo ajustado al resto de la página */
+  padding: 0; /* Elimina padding si es innecesario */
+  margin: 0; /* Elimina márgenes si es innecesario */
+}
+
+.navbar {
+  width: 100%;
+  margin-bottom: 0; /* Asegúrate de que no haya espacio entre la barra y el contenido */
+}
+
+.date-selector-container, .date-selector-nav {
+  margin: 0; /* Elimina márgenes adicionales */
+  padding: 20px 0; /* Ajuste de padding para reducir espacios */
+  background-color: #eef2f3; /* Fondo ajustado para el formulario */
+  border-radius: 10px; /* Bordes redondeados para consistencia */
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.apartment-details-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.apartment-details {
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con transparencia */
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+}

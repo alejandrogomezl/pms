@@ -1,16 +1,16 @@
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import '../css/ApartmentDetails.scss';
 
 const ApartmentDetails = () => {
   const [apartment, setApartment] = useState(null);
   const { id } = useParams();  // Extrae el id de la URL
   const navigate = useNavigate();
-  console.log('id:', id);
 
   useEffect(() => {
     const fetchApartment = async () => {
-      const url = `http://localhost:3000/api/apartments/${id}`; // Asegúrate de incluir el puerto correcto y la ruta completa
+      const url = `http://localhost:3000/api/apartments/${id}`;
       try {
         const response = await axios.get(url);
         setApartment(response.data);
@@ -23,19 +23,36 @@ const ApartmentDetails = () => {
   }, [id]);
 
   const handleReservationClick = () => {
-    navigate(`/reserve/${id}`); // Redirige al formulario de reserva con el ID del apartamento
+    navigate(`/reserve/${id}`);
   };
-
 
   if (!apartment) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h1>{apartment.name}</h1>
-      <p>{apartment.description}</p>
-      <p>Location: {apartment.location}</p>
-      <p>Price: ${apartment.price}</p>
-      <button onClick={handleReservationClick}>Make a Reservation</button>
+    <div className="apartment-details">
+      <div className="apartment-header">
+        <h1>{apartment.name}</h1>
+      </div>
+      <div className="apartment-content">
+        <div className="apartment-image-container">
+          <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
+        </div>
+        <div className="apartment-info">
+        <h2 className="description-title">Descripción</h2>
+          <p className="description">{apartment.description}</p>
+          {/* <ul className="services-list">
+            {apartment.services && apartment.services.map((service, index) => (
+              <li key={index}>{service}</li>
+            ))}
+          </ul> */}
+        </div>
+      </div>
+      <div className="apartment-reservation">
+        <div className="price-container">
+          <span className="price">{apartment.price.toFixed(2)} €</span>
+        </div>
+        <button className="reserve-button" onClick={handleReservationClick}>Reservar</button>
+      </div>
     </div>
   );
 };

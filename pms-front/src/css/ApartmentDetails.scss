@@ -1,0 +1,101 @@
+.apartment-details {
+  background-color: #fff; /* Fondo blanco */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.apartment-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.apartment-header h1 {
+  font-size: 36px;
+  color: #2C3E50;
+  margin: 0;
+}
+
+.apartment-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.apartment-image-container {
+  flex: 1;
+  margin-right: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.apartment-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.apartment-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  font-size: 18px;
+  color: #2C3E50;
+  margin-bottom: 20px;
+}
+
+.services-list {
+  list-style-type: none;
+  padding: 0;
+  columns: 2; /* Organiza los servicios en dos columnas */
+  gap: 10px;
+  font-size: 16px;
+  color: #2C3E50;
+}
+
+.services-list li {
+  margin-bottom: 8px;
+}
+
+.apartment-reservation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+.price-container {
+  font-size: 32px;
+  color: #2C3E50;
+  font-weight: bold;
+}
+
+.reserve-button {
+  padding: 10px 20px;
+  background-color: #2C3E50;
+  color: #fff;
+  border-radius: 20px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: #1A242F;
+}
+
+.apartment-info h2 {
+  font-size: 24px;
+  color: #2C3E50;
+  margin: 0;
+}
