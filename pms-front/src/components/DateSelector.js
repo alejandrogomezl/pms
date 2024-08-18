@@ -1,61 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { DateContext } from '../context/DateContext';
 import '../css/DateSelector.scss';
 
-const DateSelector = ({ onDatesChange, isSubmittedProp }) => {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const DateSelector = ({ isSubmittedProp, onDatesChange }) => {
+  const { selectedDates, setSelectedDates } = useContext(DateContext);
+  const [startDate, setStartDate] = useState(selectedDates.startDate || '');
+  const [endDate, setEndDate] = useState(selectedDates.endDate || '');
+  const [isSubmitted, setIsSubmitted] = useState(isSubmittedProp || false);
+  const [error, setError] = useState('');
 
-  const handleStartDateChange = (e) => setStartDate(e.target.value);
-  const handleEndDateChange = (e) => setEndDate(e.target.value);
+  useEffect(() => {
+    setSelectedDates({ startDate, endDate });
+  }, [startDate, endDate, setSelectedDates]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onDatesChange({ startDate, endDate });
-    setIsSubmitted(true);
+    if (!startDate || !endDate) {
+      setError('Por favor, selecciona ambas fechas.');
+    } else {
+      setError('');
+      setIsSubmitted(true);
+      onDatesChange({ startDate, endDate });
+    }
   };
 
-  // Utilizar el estado pasado por props si existe
   useEffect(() => {
     if (isSubmittedProp !== undefined) {
       setIsSubmitted(isSubmittedProp);
     }
   }, [isSubmittedProp]);
 
-  if (isSubmitted) {
-    return (
-      <div className="date-selector-nav">
-        <label htmlFor="startDate" className="form-label">Fecha Llegada:
-          <input type="date" className="form-control date-input" id="startDate" value={startDate} onChange={handleStartDateChange} />
-        </label>
-        <label htmlFor="endDate" className="form-label">Fecha Salida:
-          <input type="date" className="form-control date-input" id="endDate" value={endDate} onChange={handleEndDateChange} />
-        </label>
-        <button type="submit" className="search-button">Buscar</button>
-      </div>
-    );
-  }
-
   return (
-    <div className="date-selector-container">
-      <form onSubmit={handleSubmit} className="date-form">
-        <label htmlFor="startDate" className="form-label">Start Date:</label>
+    <div className={isSubmitted ? "date-selector-nav" : "date-selector-container"}>
+      <form onSubmit={handleSubmit} className={isSubmitted ? "date-form-nav" : "date-form"}>
+        <label htmlFor="startDate" className="form-label">Fecha Llegada:</label>
         <input
           type="date"
           className="form-control date-input"
           id="startDate"
           value={startDate}
-          onChange={handleStartDateChange}
+          onChange={(e) => setStartDate(e.target.value)}
         />
-        <label htmlFor="endDate" className="form-label">End Date:</label>
+        <label htmlFor="endDate" className="form-label">Fecha Salida:</label>
         <input
           type="date"
           className="form-control date-input"
           id="endDate"
           value={endDate}
-          onChange={handleEndDateChange}
+          onChange={(e) => setEndDate(e.target.value)}
         />
         <button type="submit" className="search-button">Buscar</button>
+        {error && <p className="error-message">{error}</p>}
       </form>
     </div>
   );

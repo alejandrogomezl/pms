@@ -1,12 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import '../css/ApartmentDetails.scss';
+import { DateContext } from '../context/DateContext';
 
 const ApartmentDetails = () => {
   const [apartment, setApartment] = useState(null);
   const { id } = useParams();  // Extrae el id de la URL
   const navigate = useNavigate();
+  const { selectedDates } = useContext(DateContext);
 
   useEffect(() => {
     const fetchApartment = async () => {

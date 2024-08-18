@@ -1,20 +1,19 @@
 // Variables
 $primary-color: #2C3E50;
 $secondary-color: #f5f5f5;
-$button-color: #000000;
+$button-color: #2C3E50  ;
 $nav-background-color: #ecf0f1;
 
 // Estilos para el contenedor principal
 .date-selector-container {
   display: flex;
-  margin-top: 10%;
-  justify-content: center;
-  align-items: center;
+  background-color: #ffffff00 !important;
+  justify-content: center; /* Centra el formulario horizontalmente */
+  align-items: center; /* Centra el formulario verticalmente */
+  height: 80vh; /* Asegura que el contenedor ocupe toda la altura de la página */
   padding: 20px;
-  //background-color: $secondary-color;
-  border-radius: 10px;
-  //box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
+  box-sizing: border-box;
+} 
 
 // Estilos para la barra de navegación después de enviar el formulario
 .date-selector-nav {
@@ -28,11 +27,25 @@ $nav-background-color: #ecf0f1;
   gap: 15px;
 }
 
+.date-form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;  
+}
+
 // Estilos generales para formularios
 .date-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f7f6;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: auto;
+  max-width: 400px; /* Limita el ancho máximo del formulario */
 }
 
 .form-label {
@@ -66,8 +79,14 @@ $nav-background-color: #ecf0f1;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  margin-top: 20px;
 }
 
 .search-button:hover {
   background-color: darken($button-color, 10%);
+}
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
 }

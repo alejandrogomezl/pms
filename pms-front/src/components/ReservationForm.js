@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ReservationForm.scss';
+import { DateContext } from '../context/DateContext';
 
 const ReservationForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [apartment, setApartment] = useState(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const { selectedDates } = useContext(DateContext);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
@@ -33,8 +33,8 @@ const ReservationForm = () => {
     try {
       const response = await axios.post('http://localhost:3000/api/reservations', {
         apartmentId: id,
-        startDate,
-        endDate,
+        startDate: selectedDates.startDate,
+        endDate: selectedDates.endDate,
         firstName,
         lastName,
         address,
@@ -61,7 +61,7 @@ const ReservationForm = () => {
         <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
         <div className="apartment-details">
           <h2>{apartment.name}</h2>
-          <p>Desde {startDate || "dd/mm/yyyy"} hasta {endDate || "dd/mm/yyyy"} | {apartment.nights || "x"} noches</p>
+          <p>Desde {selectedDates.startDate || "dd/mm/yyyy"} hasta {selectedDates.endDate || "dd/mm/yyyy"} | {apartment.nights || "x"} noches</p>
           <div className="apartment-price">
             <span>{apartment.price.toFixed(2)} €</span>
           </div>

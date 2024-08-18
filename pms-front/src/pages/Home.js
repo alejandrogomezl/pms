@@ -7,13 +7,14 @@ import NavBar from '../components/NavBar';
 
 const Home = () => {
   const [apartments, setApartments] = useState([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleDatesChange = async (dates) => {
     try {
       const response = await axios.get('http://localhost:3000/api/apartments', {
         params: {
           startDate: dates.startDate,
-          endDate: dates.endDate
+          endDate: dates.endDate,
         }
       });
       setApartments(response.data);
@@ -25,7 +26,8 @@ const Home = () => {
   return (
     <div>
       <NavBar />
-      <DateSelector onDatesChange={handleDatesChange} />
+      <DateSelector isSubmittedProp={isSubmitted} onDatesChange={handleDatesChange} />
+      {isSubmitted && <ApartmentList apartments={apartments} />}
       <ApartmentList apartments={apartments} />
     </div>
   );

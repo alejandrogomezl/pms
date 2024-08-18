@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../css/ApartmentList.scss'; // Asegúrate de que la ruta es correcta
 
 const ApartmentList = ({ apartments }) => {
+  console.log(apartments);
   if (!apartments) {
     apartments = [];  // Maneja el caso de que 'apartments' sea undefined
   }

@@ -3,6 +3,10 @@ const express = require('express');
 const router = express.Router();
 const Apartment = require('../models/Apartment'); // Asegúrate de que esta ruta es correcta
 
+const { getAvailableApartments } = require('../controllers/apartmentController');
+
+router.get('/', getAvailableApartments);
+
 // Ruta GET para obtener todos los apartamentos
 router.get('/', async (req, res) => {
   try {
