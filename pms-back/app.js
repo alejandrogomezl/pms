@@ -19,10 +19,12 @@ app.use(cors());
 const authRoutes = require('./routes/auth');
 const apartmentRoutes = require('./routes/apartments');
 const reservationRoutes = require('./routes/reservations');
+const settingsRoutes = require('./routes/settings');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/apartments', apartmentRoutes);  // Asegúrate de que esto está configurado
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/settings', settingsRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

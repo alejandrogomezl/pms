@@ -8,7 +8,7 @@ const { getAvailableApartments } = require('../controllers/apartmentController')
 router.get('/', getAvailableApartments);
 
 // Ruta GET para obtener todos los apartamentos
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   try {
     const apartments = await Apartment.find(); // Asegúrate de que esta función sea válida
     res.json(apartments);

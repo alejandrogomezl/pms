@@ -44,6 +44,34 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/res', async (req, res) => {
+  try {
+    const { startDate, endDate, page = 1, limit = 10 } = req.query;
+
+    // Construir la consulta basada en los parámetros de fecha
+    const query = {};
+    if (startDate && endDate) {
+      query.startDate = { $gte: new Date(startDate) };
+      query.endDate = { $lte: new Date(endDate) };
+    }
+
+    // Contar el número total de reservas que coinciden con la consulta
+    const totalReservations = await Reservation.countDocuments(query);
+
+    // Obtener las reservas paginadas
+    const reservations = await Reservation.find(query)
+      .sort({ startDate: -1 }) // Ordena por la fecha de inicio, la más reciente primero
+      .skip((page - 1) * limit) // Salta las reservas para la paginación
+      .limit(parseInt(limit));  // Limita el número de resultados
+
+    // Devolver las reservas y el número total de reservas
+    res.json({ reservations, totalReservations });
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).send('Error del servidor');
+  }
+});
+
 
 router.get('/', async (req, res) => {
   try {
