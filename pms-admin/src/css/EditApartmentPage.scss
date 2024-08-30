@@ -1,0 +1,46 @@
+/* src/css/EditApartmentPage.scss */
+.edit-apartment-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .edit-apartment-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .edit-apartment-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .edit-apartment-form label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .edit-apartment-form input,
+  .edit-apartment-form textarea {
+    margin-bottom: 16px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .edit-apartment-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .edit-apartment-form button:hover {
+    background-color: #0056b3;
+  }
+  

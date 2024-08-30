@@ -36,7 +36,7 @@ const generateRandomReservation = (apartmentId) => {
 
   do {
     // Generar fechas aleatorias
-    startDate = faker.date.between({ from: '2025-09-01', to: '2026-09-30' });
+    startDate = faker.date.between({ from: '2024-08-01', to: '2026-09-30' });
     endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + faker.number.int({ min: 1, max: 7 }));
 

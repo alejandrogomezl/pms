@@ -1,14 +1,27 @@
-// models/Apartment.js
 const mongoose = require('mongoose');
 
-// Definir el esquema para Apartment
 const ApartmentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  location: { type: String, required: true },
-  price: { type: Number, required: true },
-  availability: { type: [Date], required: true }
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  services: {
+    type: [String], // Asegúrate de que se espera un array
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+  }
 });
 
-// Exportar el modelo
-module.exports = mongoose.model('Apartment', ApartmentSchema);
+const Apartment = mongoose.model('Apartment', ApartmentSchema);
+module.exports = Apartment;

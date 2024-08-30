@@ -2,7 +2,19 @@
 import React from 'react';
 import '../css/ReservationsTable.scss';
 
-const ReservationsTable = ({ reservations = [] }) => {  // Asigna un array vacío como valor predeterminado
+const ReservationsTable = ({ reservations = [], onSort, sortBy, sortOrder, ojete }) => {
+  
+  console.log('hola?:', ojete);
+  const renderSortIcon = (column) => {
+    if (sortBy === column) {
+      return sortOrder === 'asc' ? ' ↑' : ' ↓';
+    }
+    return null;
+  };
+
+  
+
+
   return (
     <div className="reservations-table-container">
       <h3>Reservas</h3>
@@ -12,21 +24,21 @@ const ReservationsTable = ({ reservations = [] }) => {  // Asigna un array vací
         <table className="reservations-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Fecha Llegada</th>
-              <th>Fecha Salida</th>
-              <th>Apartamento</th>
+              <th onClick={() => onSort('reservationId')}>ID {renderSortIcon('reservationId')}</th>
+              <th onClick={() => onSort('firstName')}>Nombre {renderSortIcon('firstName')}</th>
+              <th onClick={() => onSort('startDate')}>Fecha Llegada {renderSortIcon('startDate')}</th>
+              <th onClick={() => onSort('endDate')}>Fecha Salida {renderSortIcon('endDate')}</th>
+              <th onClick={() => onSort('apartmentId')}>Apartamento {renderSortIcon('apartmentId')}</th>
             </tr>
           </thead>
           <tbody>
             {reservations.map((reservation) => (
               <tr key={reservation._id}>
-                <td>{reservation._id}</td>
+                <td>{reservation.reservationId}</td>
                 <td>{reservation.firstName} {reservation.lastName}</td>
                 <td>{reservation.startDate}</td>
                 <td>{reservation.endDate}</td>
-                <td>{reservation.apartmentName}</td>
+                <td>{reservation.apartmentId.name}</td>
               </tr>
             ))}
           </tbody>

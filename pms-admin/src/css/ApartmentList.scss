@@ -1,65 +1,92 @@
-.apartments-page {
-  max-width: 100%; /* Cambiado a 100% para ocupar todo el ancho */
-  margin: 0 auto;
-  padding: 20px;
-
-  h1 {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-}
-
 .apartment-list {
   display: flex;
-  flex-direction: column; /* Cambiado a columna para que los apartamentos se apilen verticalmente */
+  flex-direction: column;
   gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .apartment-item {
+  display: flex;
+  flex-direction: row;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: 100%; /* Ocupa todo el ancho disponible */
-  display: flex;
-  flex-direction: row; /* Mantiene la imagen y la información en línea */
+  padding: 20px;
+  align-items: center;
+  height: 200px;
 }
 
 .apartment-image-container {
-  flex: 1; /* Hace que la imagen ocupe un espacio proporcional dentro del contenedor */
-  height: auto; /* Ajusta la altura según el contenido */
-  overflow: hidden;
+  flex: 1;
+  max-width: 250px;
+  margin-right: 20px;
 }
 
 .apartment-image {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 170px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
 .apartment-info {
-  flex: 2; /* Hace que la información ocupe un espacio mayor dentro del contenedor */
-  padding: 15px;
+  flex: 2;
+}
+
+.apartment-info h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.apartment-info p {
+  margin: 0;
+  color: #666;
+}
+
+.apartment-info p:first-of-type {
+  margin-bottom: 10px;
 }
 
 .apartment-price-reserve {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background-color: #007bff;
-  color: #fff;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.apartment-price {
+  margin-bottom: 10px;
+  text-align: right;
+  color: #333;
+}
+
+.apartment-price .price {
+  font-size: 24px;
   font-weight: bold;
-  flex-direction: column; /* Cambia la disposición de la información del precio y el botón de reserva a columna */
+  color: #007bff;
+}
+
+.apartment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre los elementos */
 }
 
 .reserve-button {
   background-color: #28a745;
   color: #fff;
-  padding: 8px 12px;
+  padding: 10px 20px;
   text-decoration: none;
   border-radius: 4px;
-  margin-top: 10px; /* Añadido para dar espacio entre el precio y el botón */
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .reserve-button:hover {

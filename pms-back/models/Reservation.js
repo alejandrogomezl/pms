@@ -1,6 +1,12 @@
+// models/Reservation.js
 const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
+  reservationId: {
+    type: Number,
+    unique: true,
+    required: true
+  },
   apartmentId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

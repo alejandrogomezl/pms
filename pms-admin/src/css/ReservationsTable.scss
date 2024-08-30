@@ -1,0 +1,20 @@
+.reservations-table th {
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .reservations-table th::after {
+    content: ' ';
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  
+  .reservations-table th.sorted-asc::after {
+    content: '▲';
+  }
+  
+  .reservations-table th.sorted-desc::after {
+    content: '▼';
+  }
+  
