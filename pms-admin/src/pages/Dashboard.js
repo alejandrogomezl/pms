@@ -1,97 +1,103 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReservationsTable from '../components/ReservationsTable';
-import '../css/Dashboard.scss';
+import '../css/Dashboard.scss'; // Usamos el CSS del Dashboard
 
-const Dashboard = () => {
+const Apartments = () => {
   const [reservations, setReservations] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [reservationsPerPage] = useState(10);
-  const [totalReservations, setTotalReservations] = useState(0);
+  const [sortBy, setSortBy] = useState('startDate'); // Campo por defecto
+  const [sortOrder, setSortOrder] = useState('asc'); // Orden por defecto
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [pageSize] = useState(10); // Tamaño de página
+  const [totalReservations, setTotalReservations] = useState(0); // Total de reservas
 
   useEffect(() => {
     fetchReservations();
-  }, [startDate, endDate, currentPage]);
+  }, [startDate, endDate, sortBy, sortOrder, currentPage]);
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/reservations/res', {
-        params: {
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-          page: currentPage,
-          limit: reservationsPerPage,
-        }
-      });
+      const apiUrl = 'http://localhost:3000/api/reservations/res';
 
-      // Verificar que la respuesta contenga datos válidos
-      if (response.data && response.data.reservations) {
-        setReservations(response.data.reservations);
-        setTotalReservations(response.data.totalReservations || 0);
-      } else {
-        // Si no se devuelven reservas, establecer a un array vacío
-        setReservations([]);
-        setTotalReservations(0);
-      }
+      const params = {
+        sortBy,
+        sortOrder,
+        page: currentPage,
+        limit: pageSize,
+      };
+
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+
+      console.log('Fetching reservations with params:', params);
+
+      const response = await axios.get(apiUrl, { params });
+      setReservations(response.data.reservations);
+      setTotalReservations(response.data.totalReservations);
     } catch (error) {
       console.error('Error fetching reservations:', error);
-      // En caso de error, establecer las reservas a un array vacío
-      setReservations([]);
-      setTotalReservations(0);
     }
   };
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
-    setCurrentPage(1); // Resetea a la primera página al cambiar las fechas
   };
 
   const handleEndDateChange = (e) => {
     setEndDate(e.target.value);
-    setCurrentPage(1); // Resetea a la primera página al cambiar las fechas
   };
 
-  const handlePreviousPage = () => {
-    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(totalReservations / reservationsPerPage)) {
-      setCurrentPage(prevPage => prevPage + 1);
+  const handleSort = (column) => {
+    // Ciclo de orden: ascendente -> descendente -> por defecto
+    if (sortBy === column) {
+      if (sortOrder === 'asc') {
+        setSortOrder('desc'); // Cambia a descendente
+      } else if (sortOrder === 'desc') {
+        setSortBy(null); // Reinicia el campo a sin orden
+        setSortOrder(null);
+      } else {
+        setSortOrder('asc'); // Cambia a ascendente
+      }
+    } else {
+      setSortBy(column);
+      setSortOrder('asc'); // Nuevo campo, empieza en ascendente
     }
   };
 
-  const totalPages = Math.ceil(totalReservations / reservationsPerPage);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= Math.ceil(totalReservations / pageSize)) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
     <div className="dashboard-container">
-      <div className="dashboard-header">
-        <h2>Panel de Control de Reservas</h2>
-        <div className="filter-container">
-          <label>Fecha Inicio:</label>
-          <input type="date" value={startDate} onChange={handleStartDateChange} />
-          <label>Fecha Fin:</label>
-          <input type="date" value={endDate} onChange={handleEndDateChange} />
-        </div>
+      <h2>Todas las Reservas</h2>
+      <div className="filter-container">
+        <label>Fecha Inicio:</label>
+        <input type="date" value={startDate} onChange={handleStartDateChange} />
+        <label>Fecha Fin:</label>
+        <input type="date" value={endDate} onChange={handleEndDateChange} />
       </div>
-      <div className="dashboard-content">
-        {reservations.length > 0 ? (
-          <>
-            <ReservationsTable reservations={reservations} />
-            <div className="pagination-buttons">
-              <button onClick={handlePreviousPage} disabled={currentPage === 1}>Anterior</button>
-              <span>Página {currentPage} de {totalPages}</span>
-              <button onClick={handleNextPage} disabled={currentPage === totalPages}>Siguiente</button>
-            </div>
-          </>
-        ) : (
-          <p>No hay reservas disponibles.</p>
-        )}
+      <ReservationsTable
+        reservations={reservations}
+        onSort={handleSort}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+      />
+      <div className="pagination-controls">
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+          Anterior
+        </button>
+        <span>Página {currentPage} de {Math.ceil(totalReservations / pageSize)}</span>
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(totalReservations / pageSize)}>
+          Siguiente
+        </button>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Apartments;

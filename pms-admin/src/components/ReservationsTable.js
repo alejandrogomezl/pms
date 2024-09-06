@@ -2,9 +2,7 @@
 import React from 'react';
 import '../css/ReservationsTable.scss';
 
-const ReservationsTable = ({ reservations = [], onSort, sortBy, sortOrder, ojete }) => {
-  
-  console.log('hola?:', ojete);
+const ReservationsTable = ({ reservations = [], onSort, sortBy, sortOrder }) => {
   const renderSortIcon = (column) => {
     if (sortBy === column) {
       return sortOrder === 'asc' ? ' ↑' : ' ↓';
@@ -13,7 +11,6 @@ const ReservationsTable = ({ reservations = [], onSort, sortBy, sortOrder, ojete
   };
 
   
-
 
   return (
     <div className="reservations-table-container">

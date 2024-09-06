@@ -9,12 +9,3 @@
     margin-left: 5px;
     vertical-align: middle;
   }
-  
-  .reservations-table th.sorted-asc::after {
-    content: '▲';
-  }
-  
-  .reservations-table th.sorted-desc::after {
-    content: '▼';
-  }
-  

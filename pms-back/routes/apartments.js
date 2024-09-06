@@ -123,4 +123,6 @@ router.put('/:id', async (req, res) => {
 
 // Agregar más rutas según sea necesario
 
+// routes/apartments.js
+
 module.exports = router;

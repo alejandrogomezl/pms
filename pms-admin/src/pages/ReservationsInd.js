@@ -1,27 +1,33 @@
-// src/pages/ReservationsPage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import ReservationsTable from '../components/ReservationsTable';
 import '../css/Dashboard.scss'; // Usamos el CSS del Dashboard
 
-const ReservationsPage = () => {
+const ReservationsInd = () => {
+  const { apartmentId } = useParams();
   const [reservations, setReservations] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [sortBy, setSortBy] = useState('startDate'); // Campo por defecto
   const [sortOrder, setSortOrder] = useState('asc'); // Orden por defecto
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [pageSize] = useState(10); // Tamaño de página
+  const [totalReservations, setTotalReservations] = useState(0); // Total de reservas
 
   useEffect(() => {
     fetchReservations();
-  }, [startDate, endDate, sortBy, sortOrder]);
+  }, [startDate, endDate, sortBy, sortOrder, currentPage]);
 
   const fetchReservations = async () => {
     try {
-      const apiUrl = 'http://localhost:3000/api/reservations/res';
+      const apiUrl = `http://localhost:3000/api/reservations/res/${apartmentId}`;
 
       const params = {
         sortBy,
         sortOrder,
+        page: currentPage,
+        limit: pageSize,
       };
 
       if (startDate) params.startDate = startDate;
@@ -31,6 +37,7 @@ const ReservationsPage = () => {
 
       const response = await axios.get(apiUrl, { params });
       setReservations(response.data.reservations);
+      setTotalReservations(response.data.totalReservations);
     } catch (error) {
       console.error('Error fetching reservations:', error);
     }
@@ -45,13 +52,25 @@ const ReservationsPage = () => {
   };
 
   const handleSort = (column) => {
+    // Ciclo de orden: ascendente -> descendente -> por defecto
     if (sortBy === column) {
-      // Si ya estamos ordenando por esta columna, invertir el orden
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      if (sortOrder === 'asc') {
+        setSortOrder('desc'); // Cambia a descendente
+      } else if (sortOrder === 'desc') {
+        setSortBy(null); // Reinicia el campo a sin orden
+        setSortOrder(null);
+      } else {
+        setSortOrder('asc'); // Cambia a ascendente
+      }
     } else {
-      // Si no, ordenar por la nueva columna en orden ascendente
       setSortBy(column);
-      setSortOrder('asc');
+      setSortOrder('asc'); // Nuevo campo, empieza en ascendente
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= Math.ceil(totalReservations / pageSize)) {
+      setCurrentPage(newPage);
     }
   };
 
@@ -69,11 +88,18 @@ const ReservationsPage = () => {
         onSort={handleSort}
         sortBy={sortBy}
         sortOrder={sortOrder}
-        ojete='hola'
-        // No se pasan los argumentos a la función del componente
       />
+      <div className="pagination-controls">
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+          Anterior
+        </button>
+        <span>Página {currentPage} de {Math.ceil(totalReservations / pageSize)}</span>
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(totalReservations / pageSize)}>
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 };
 
-export default ReservationsPage;
+export default ReservationsInd;

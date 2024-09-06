@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Route, Routes, UNSAFE_DataRouterStateContext }
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
-import ApartmentsPage from './pages/ApartmentsPage';
-import ApartmentReservationsPage from './pages/ApartmentReservationPage';
 import EditApartmentPage from './pages/EditApartmentPage';
 import CreateApartmentPage from './pages/CreateApartmenPage';
+import ApartmentsPage from './pages/ApartmentsPage';
+import ReservationsInd from './pages/ReservationsInd';
+import Price from './pages/Price';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
         < Route path="/documents" element={<h1>Documentos</h1>} />
         < Route path="/access" element={<h1>Acceso</h1>} />
         < Route path="/settings" element={<Settings />} />
-        < Route path="/reservations/:apartmentId" Component={ApartmentReservationsPage} />
+        < Route path="/reservations/:apartmentId" Component={ReservationsInd} />
+        < Route path="/price/:apartmentId" Component={Price} />
         < Route path="/edit/:id" Component={EditApartmentPage} />
         < Route path="/create-apartment" element={<CreateApartmentPage />} />
         {/* Añadir las rutas para Documentos, Acceso y Configuración */}
