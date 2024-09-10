@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../css/ApartmentList.scss'; // Asegúrate de que la ruta es correcta
 
-const ApartmentList = ({ apartments }) => {
+const ApartmentList = ({ apartments, totalPrices, nightCounts }) => {
   console.log(apartments);
   if (!apartments) {
     apartments = [];  // Maneja el caso de que 'apartments' sea undefined
@@ -23,8 +23,9 @@ const ApartmentList = ({ apartments }) => {
           </div>
           <div className="apartment-price-reserve">
             <div className="apartment-price">
-              <span>Desde</span>
-              <span className="price">{apartment.price} €</span>
+              <span>Total para tu reserva:</span>
+              <p>{nightCounts && nightCounts[apartment._id] ? nightCounts[apartment._id] : 'Calculando...'} Noches</p>
+              <p>{totalPrices && totalPrices[apartment._id] ? totalPrices[apartment._id] : 'Calculando...'} €</p>
             </div>
             <Link to={`/apartments/${apartment._id}`} className="reserve-button">Reservar</Link>
           </div>

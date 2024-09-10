@@ -1,23 +1,22 @@
 import React from 'react';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const localizer = momentLocalizer(moment);
+const CalendarPrice = ({ events }) => {
+  const localizer = momentLocalizer(moment); // Inicializar el localizador de moment
 
-const Calendar = ({ events, onSelectEvent }) => {
   return (
-    <div className="calendar-container">
-      <BigCalendar
+    <div>
+      <Calendar
         localizer={localizer}
-        events={events}
+        events={events} // Pasar los eventos (precios)
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
-        onSelectEvent={onSelectEvent} // Selección de un evento
       />
     </div>
   );
 };
 
-export default Calendar;
+export default CalendarPrice;

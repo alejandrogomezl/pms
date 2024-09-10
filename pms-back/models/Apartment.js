@@ -1,3 +1,4 @@
+// models/Apartment.js
 const mongoose = require('mongoose');
 
 const ApartmentSchema = new mongoose.Schema({
@@ -9,19 +10,15 @@ const ApartmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  price: {
-    type: Number,
-    required: true,
-  },
-  services: {
-    type: [String], // Asegúrate de que se espera un array
-    required: true,
-  },
+  services: [String],
   imageUrl: {
     type: String,
     required: true,
+  },
+  defaultPrice: {
+    type: Number, // Precio por defecto si no se establece un precio específico
+    default: 100  // Puedes cambiar el valor por defecto si lo prefieres
   }
-});
+}, { timestamps: true });
 
-const Apartment = mongoose.model('Apartment', ApartmentSchema);
-module.exports = Apartment;
+module.exports = mongoose.model('Apartment', ApartmentSchema);

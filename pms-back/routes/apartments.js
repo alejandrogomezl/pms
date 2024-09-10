@@ -1,7 +1,9 @@
 // routes/apartments.js
 const express = require('express');
 const router = express.Router();
-const Apartment = require('../models/Apartment'); // Asegúrate de que esta ruta es correcta
+const Apartment = require('../models/Apartment');
+
+// Ruta para actualizar el precio por defecto de un apartamento
 
 const { getAvailableApartments } = require('../controllers/apartmentController');
 
@@ -94,35 +96,30 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.put('/set-default-price/:id', async (req, res) => {
+  const { id } = req.params;
+  const { defaultPrice } = req.body;
 
-// router.post('/', async (req, res) => {
-//   try {
-//     const { name, description, location, price, availability } = req.body;
+  if (!defaultPrice || isNaN(defaultPrice)) {
+    return res.status(400).json({ message: 'Por favor, proporcione un precio válido' });
+  }
 
-//     // Validar los datos
-//     if (!name || !description || !location || !price || !availability) {
-//       return res.status(400).json({ error: 'All fields are required' });
-//     }
+  try {
+    const updatedApartment = await Apartment.findByIdAndUpdate(
+      id,
+      { defaultPrice },
+      { new: true }
+    );
 
-//     // Crear un nuevo documento de apartamento
-//     const newApartment = new Apartment({
-//       name,
-//       description,
-//       location,
-//       price,
-//       availability
-//     });
+    if (!updatedApartment) {
+      return res.status(404).json({ message: 'Apartamento no encontrado' });
+    }
 
-//     // Guardar el apartamento en la base de datos
-//     await newApartment.save();
-//     res.status(201).json({ message: 'Apartment created successfully', apartment: newApartment });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// Agregar más rutas según sea necesario
-
-// routes/apartments.js
+    res.json({ message: 'Precio por defecto actualizado correctamente', apartment: updatedApartment });
+  } catch (error) {
+    console.error('Error al actualizar el precio por defecto:', error);
+    res.status(500).json({ message: 'Error al actualizar el precio por defecto' });
+  }
+});
 
 module.exports = router;

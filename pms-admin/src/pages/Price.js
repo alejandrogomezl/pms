@@ -1,100 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Calendar from '../components/CalendarPrice'; // Importar el componente de calendario
-import moment from 'moment';
+import { useParams } from 'react-router-dom';
+import CalendarPrice from '../components/CalendarPrice'; // Importar el componente CalendarPrice
 
 const Price = () => {
-  const { apartmentId } = useParams(); // Obtener la ID del apartamento desde la URL
-  const [apartmentName, setApartmentName] = useState(''); // Estado para el nombre del apartamento
-  const [events, setEvents] = useState([]); // Eventos del calendario (incluyendo precios)
-  const [selectedEvent, setSelectedEvent] = useState(null); // Evento seleccionado para editar
-
+  const { apartmentId } = useParams(); // Obtener el apartmentId desde la URL
+  const [events, setEvents] = useState([]); // Eventos (precios por día)
+  const [apartment, setApartment] = useState(null); // Guardar la información del apartamento
+  
   useEffect(() => {
-    fetchApartmentDetails(); // Llamar para obtener el nombre del apartamento
-    fetchApartmentPrices(); // Llamar para obtener los precios
+    if (apartmentId) {
+      fetchApartmentInfo(); // Obtener la información del apartamento
+      fetchPrices(); // Obtener los precios
+    }
   }, [apartmentId]);
 
-  const fetchApartmentDetails = async () => {
+  // Función para obtener la información del apartamento (nombre, etc.)
+  const fetchApartmentInfo = async () => {
     try {
-      const apiUrl = `http://localhost:3000/api/apartments/${apartmentId}`; // Endpoint para obtener detalles del apartamento
-      const response = await axios.get(apiUrl);
-      const apartment = response.data.apartment;
-
-      setApartmentName(apartment.name); // Asignar el nombre del apartamento
-      console.log("name", apartment.name);
+      const response = await axios.get(`http://localhost:3000/api/apartments/${apartmentId}`);
+      setApartment(response.data); // Guardar la información del apartamento
     } catch (error) {
-      console.error('Error fetching apartment details:', error);
+      console.error('Error al obtener la información del apartamento:', error);
     }
   };
 
-  const fetchApartmentPrices = async () => {
+  // Función para obtener los precios del apartamento
+  const fetchPrices = async () => {
     try {
-      const apiUrl = `http://localhost:3000/api/prices/${apartmentId}`;
-      const response = await axios.get(apiUrl);
-      const data = response.data.prices;
+      const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+      const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
 
-      // Transformar los datos de la API en el formato que el calendario espera
-      const formattedEvents = data.map((priceEntry) => ({
-        title: `€${priceEntry.price}`, // Mostramos el precio como título
-        start: new Date(priceEntry.date),
-        end: new Date(priceEntry.date),
-        allDay: true,
-        price: priceEntry.price, // Guardamos el precio para la edición
-      }));
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error('Error fetching apartment prices:', error);
-    }
-  };
-
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event); // Permitir editar el precio de un evento
-  };
-
-  const handlePriceChange = (e) => {
-    if (selectedEvent) {
-      setSelectedEvent({
-        ...selectedEvent,
-        price: e.target.value, // Cambiar el precio del evento seleccionado
+      const response = await axios.get(`http://localhost:3000/api/prices/get-prices/${apartmentId}`, {
+        params: { startDate, endDate }
       });
-    }
-  };
 
-  const savePriceChange = async () => {
-    if (selectedEvent) {
-      try {
-        const apiUrl = `http://localhost:3000/api/prices/update/${apartmentId}`;
-        await axios.post(apiUrl, {
-          date: selectedEvent.start,
-          price: selectedEvent.price,
-        });
-        alert('Precio actualizado correctamente');
-        setSelectedEvent(null); // Cerrar el formulario de edición
-        fetchApartmentPrices(); // Recargar precios
-      } catch (error) {
-        console.error('Error saving price:', error);
-      }
+      const prices = response.data.prices;
+
+      const events = prices.map(price => ({
+        title: `€${price.price}`,
+        start: new Date(price.startDate),
+        end: new Date(price.endDate),
+        allDay: true,
+      }));
+
+      setEvents(events); // Guardar los eventos en el estado
+    } catch (error) {
+      console.error('Error fetching prices:', error);
     }
   };
 
   return (
-    <div className="calendar-price-container">
-      <h2>Precios de Calendario - {apartmentName}</h2> {/* Mostrar el nombre del apartamento */}
-      <Calendar events={events} onSelectEvent={handleSelectEvent} />
-
-      {selectedEvent && (
-        <div className="price-editor">
-          <h3>Editar precio para {moment(selectedEvent.start).format('DD/MM/YYYY')}</h3>
-          <input
-            type="number"
-            value={selectedEvent.price}
-            onChange={handlePriceChange}
-            placeholder="Nuevo precio"
-          />
-          <button onClick={savePriceChange}>Guardar</button>
-        </div>
-      )}
+    <div>
+      {/* Mostrar el nombre del apartamento y el precio */}
+      <h2>
+        {apartment ? `Precio del Apartamento - ${apartment.name}` : 'Cargando...'}
+      </h2>
+      
+      {/* Renderizar el componente CalendarPrice con los precios obtenidos */}
+      <CalendarPrice events={events} />
     </div>
   );
 };
