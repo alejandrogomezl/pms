@@ -24,6 +24,7 @@ const ApartmentList = ({ apartments }) => {
             <Link to={`/edit/${apartment._id}`} className="reserve-button">Editar</Link>
             <Link to={`/reservations/${apartment._id}`} className="reserve-button">Ver Reservas</Link>
             <Link to={`/apartments/${apartment._id}`} className="reserve-button">Acceso</Link>
+            <Link to={`/price/${apartment._id}`} className="reserve-button">Precio</Link>
           </div>
         </div>
       ))}

@@ -1,5 +1,6 @@
 // routes/reservations.js
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
 const Counter = require('../models/Counter');
@@ -150,6 +151,85 @@ router.get('/res/:apartmentId', async (req, res) => {
 });
 
 
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Buscar la reserva por _id
+    const reservation = await Reservation.findById(id).populate('apartmentId', 'name');
+    
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reserva no encontrada' });
+    }
+
+    res.json(reservation);
+  } catch (error) {
+    console.error('Error al obtener la reserva:', error); // Mostrar el error detallado en la consola
+    res.status(500).json({ message: 'Error del servidor', error: error.message });
+  }
+});
+
+
+
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { firstName, lastName, startDate, endDate, phoneNumber, dni } = req.body;
+
+  // Verificar si el ID tiene el formato correcto de ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'El ID proporcionado no es válido' });
+  }
+
+  // Convertir las fechas de string a objetos Date
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (!firstName || !lastName || !start || !end || !phoneNumber || !dni) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+  }
+
+  try {
+    // Actualizar la reserva basada en el _id
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      id,
+      { firstName, lastName, startDate: start, endDate: end, phoneNumber, dni },
+      { new: true }
+    );
+
+    if (!updatedReservation) {
+      return res.status(404).json({ message: 'Reserva no encontrada' });
+    }
+
+    res.json({ message: 'Reserva actualizada correctamente', reservation: updatedReservation });
+  } catch (error) {
+    console.error('Error al actualizar la reserva:', error);
+    res.status(500).json({ message: 'Error del servidor', error: error.message });
+  }
+});
+
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  // Verificar si el ID tiene el formato correcto de ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'El ID proporcionado no es válido' });
+  }
+
+  try {
+    // Eliminar la reserva basada en el _id
+    const deletedReservation = await Reservation.findByIdAndDelete(id);
+
+    if (!deletedReservation) {
+      return res.status(404).json({ message: 'Reserva no encontrada' });
+    }
+
+    res.json({ message: 'Reserva eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar la reserva:', error);
+    res.status(500).json({ message: 'Error del servidor', error: error.message });
+  }
+});
 
 
 

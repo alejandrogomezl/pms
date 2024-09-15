@@ -8,6 +8,8 @@ import CreateApartmentPage from './pages/CreateApartmenPage';
 import ApartmentsPage from './pages/ApartmentsPage';
 import ReservationsInd from './pages/ReservationsInd';
 import Price from './pages/Price';
+import Details from './pages/Details';
+import BillPage from './pages/BillPage';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         < Route path="/price/:apartmentId" Component={Price} />
         < Route path="/edit/:id" Component={EditApartmentPage} />
         < Route path="/create-apartment" element={<CreateApartmentPage />} />
+        <Route path="/details/:reservationId" element={<Details />} /> {/* Ruta para la página de detalles */}
+        <Route path="/bill/:reservationId" element={<BillPage />} /> {/* Ruta para la factura */}
         {/* Añadir las rutas para Documentos, Acceso y Configuración */}
       </Routes>
     </Router>
