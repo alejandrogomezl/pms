@@ -19,6 +19,10 @@ const getNextReservationId = async () => {
   return counter.seq;
 };
 
+const generateSecretCode = () => {
+  return Math.floor(100000 + Math.random() * 900000);
+};
+
 router.post('/', async (req, res) => {
   const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni } = req.body;
 
@@ -44,6 +48,7 @@ router.post('/', async (req, res) => {
     }
 
     const reservationId = await getNextReservationId();
+    const secretCode = generateSecretCode();
 
     // Crear la reserva si no hay solapamiento
     const reservation = new Reservation({
@@ -54,7 +59,8 @@ router.post('/', async (req, res) => {
       firstName,
       lastName,
       phoneNumber,
-      dni
+      dni,
+      secretCode
     });
     await reservation.save();
     res.status(201).json({ message: 'Reservation created', reservation });

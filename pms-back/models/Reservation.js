@@ -35,6 +35,10 @@ const reservationSchema = new mongoose.Schema({
   dni: {
     type: String,
     required: true
+  },
+  secretCode: { 
+    type: Number,
+    required: true
   }
 });
 
