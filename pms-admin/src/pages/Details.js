@@ -116,6 +116,9 @@ const Details = () => {
           <p><strong>Nombre:</strong> {reservation.firstName} {reservation.lastName}</p>
           <p><strong>Fecha de Llegada:</strong> {new Date(reservation.startDate).toLocaleDateString()}</p>
           <p><strong>Fecha de Salida:</strong> {new Date(reservation.endDate).toLocaleDateString()}</p>
+          <p><strong>Teléfono:</strong> {reservation.phoneNumber}</p>
+          <p><strong>DNI:</strong> {reservation.dni}</p>
+          <p><strong>Plataforma:</strong> {reservation.platform}</p>
           <p><strong>Apartamento:</strong> {reservation.apartmentId.name}</p>
           <button onClick={() => setIsEditing(true)}>Editar</button>
           <button onClick={handleDelete} className="delete-button">

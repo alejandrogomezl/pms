@@ -39,6 +39,11 @@ const reservationSchema = new mongoose.Schema({
   secretCode: { 
     type: Number,
     required: true
+  },
+  platform: {
+    type: String,
+    enum: ['Booking', 'Airbnb', 'Direct'],
+    default: 'Direct'
   }
 });
 

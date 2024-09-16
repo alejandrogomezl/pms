@@ -24,7 +24,7 @@ const generateSecretCode = () => {
 };
 
 router.post('/', async (req, res) => {
-  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni } = req.body;
+  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni, platform } = req.body;
 
   // Convertir las fechas de string a objetos Date
   const start = new Date(startDate);
@@ -32,6 +32,12 @@ router.post('/', async (req, res) => {
 
   if (!apartmentId || !start || !end || !firstName || !lastName || !phoneNumber || !dni) {
     return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  // Validar que la plataforma sea válida
+  const allowedPlatforms = ['Booking', 'Airbnb', 'Direct', 'Other'];
+  if (platform && !allowedPlatforms.includes(platform)) {
+    return res.status(400).json({ error: 'Invalid platform' });
   }
 
   try {
@@ -60,7 +66,8 @@ router.post('/', async (req, res) => {
       lastName,
       phoneNumber,
       dni,
-      secretCode
+      secretCode,
+      platform: platform || 'Direct' // Si no se especifica plataforma, asignamos 'Direct'
     });
     await reservation.save();
     res.status(201).json({ message: 'Reservation created', reservation });
@@ -68,6 +75,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 router.get('/', async (req, res) => {
   try {
@@ -179,7 +187,7 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { firstName, lastName, startDate, endDate, phoneNumber, dni } = req.body;
+  const { firstName, lastName, startDate, endDate, phoneNumber, dni, platform } = req.body;
 
   // Verificar si el ID tiene el formato correcto de ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -194,11 +202,17 @@ router.put('/:id', async (req, res) => {
     return res.status(400).json({ message: 'Todos los campos son obligatorios' });
   }
 
+  // Validar que la plataforma sea válida
+  const allowedPlatforms = ['Booking', 'Airbnb', 'Direct', 'Other'];
+  if (platform && !allowedPlatforms.includes(platform)) {
+    return res.status(400).json({ message: 'Invalid platform' });
+  }
+
   try {
     // Actualizar la reserva basada en el _id
     const updatedReservation = await Reservation.findByIdAndUpdate(
       id,
-      { firstName, lastName, startDate: start, endDate: end, phoneNumber, dni },
+      { firstName, lastName, startDate: start, endDate: end, phoneNumber, dni, platform: platform || 'Direct' },
       { new: true }
     );
 
@@ -212,6 +226,7 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ message: 'Error del servidor', error: error.message });
   }
 });
+
 
 
 router.delete('/:id', async (req, res) => {
