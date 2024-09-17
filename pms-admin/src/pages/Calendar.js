@@ -32,7 +32,7 @@ const CalendarPage = () => {
   const [reservations, setReservations] = useState([]);
   const [apartmentColors, setApartmentColors] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [view, setView] = useState('week');
+  const [view, setView] = useState('week'); // Vista por defecto: semana
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -113,6 +113,16 @@ const CalendarPage = () => {
     setSelectedDate(new Date(e.target.value));
   };
 
+  // Función para manejar la navegación del calendario (botones de hoy, siguiente, anterior)
+  const handleNavigate = (newDate) => {
+    setSelectedDate(newDate); // Actualiza la fecha seleccionada al navegar
+  };
+
+  // Manejar el cambio de vista (semana, mes)
+  const handleViewChange = (newView) => {
+    setView(newView); // Actualiza la vista seleccionada (semana o mes)
+  };
+
   return (
     <div style={{ height: '80vh', padding: '20px' }}>
       <h2>Calendario de Reservas</h2>
@@ -135,11 +145,14 @@ const CalendarPage = () => {
         eventPropGetter={eventStyleGetter}
         views={['week', 'month']}
         defaultView={Views.WEEK}
+        view={view} // Establecer la vista actual
         step={1440}
         timeslots={1}
         showMultiDayTimes={false}
         dayLayoutAlgorithm="no-overlap"
         onSelectEvent={handleSelectEvent}
+        onNavigate={handleNavigate} // Maneja la navegación (hoy, anterior, siguiente)
+        onView={handleViewChange} // Manejar el cambio de vista
         messages={messages} // Añadir los mensajes personalizados en español
       />
     </div>
