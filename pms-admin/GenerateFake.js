@@ -4,7 +4,8 @@ const { faker } = require('@faker-js/faker');
 // Asumimos que tienes IDs válidos de apartamentos disponibles
 const apartmentIds = [
   '66b28fa5788b6539eddadf41', // Reemplaza estos con IDs reales de tu base de datos
-  '66b40bb1795418e57ed1af16'
+  '66b40bb1795418e57ed1af16',
+  '66d1b0d0830e0d5154381fd3'
 ];
 
 // Mapa para almacenar las fechas ocupadas por cada apartamento

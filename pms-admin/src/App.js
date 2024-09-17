@@ -10,6 +10,7 @@ import ReservationsInd from './pages/ReservationsInd';
 import Price from './pages/Price';
 import Details from './pages/Details';
 import BillPage from './pages/BillPage';
+import CalendarPage from './pages/Calendar';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         < Route path="/create-apartment" element={<CreateApartmentPage />} />
         <Route path="/details/:reservationId" element={<Details />} /> {/* Ruta para la página de detalles */}
         <Route path="/bill/:reservationId" element={<BillPage />} /> {/* Ruta para la factura */}
+        <Route path="/calendar" element={<CalendarPage />} /> {/* Ruta para el calendario */}
         {/* Añadir las rutas para Documentos, Acceso y Configuración */}
       </Routes>
     </Router>

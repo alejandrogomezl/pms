@@ -41,11 +41,17 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    // Verificar si hay alguna reserva existente que se solape con las fechas dadas
+    // Modificar la consulta para permitir reservas en la misma fecha de finalización o inicio de otra reserva
     const overlappingReservation = await Reservation.findOne({
       apartmentId: apartmentId,
       $or: [
-        { startDate: { $lte: end }, endDate: { $gte: start } },
+        // Caso donde las reservas se solapan (excepto el último día)
+        {
+          $and: [
+            { startDate: { $lt: end } }, // La reserva existente empieza antes del final de la nueva reserva
+            { endDate: { $gt: start } }, // La reserva existente termina después del inicio de la nueva reserva
+          ]
+        },
       ]
     });
 
@@ -67,7 +73,7 @@ router.post('/', async (req, res) => {
       phoneNumber,
       dni,
       secretCode,
-      platform: platform || 'Direct' // Si no se especifica plataforma, asignamos 'Direct'
+      platform: platform || 'Direct'
     });
     await reservation.save();
     res.status(201).json({ message: 'Reservation created', reservation });
@@ -79,7 +85,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const reservations = await Reservation.find(); // Asegúrate de que esta función sea válida
+    const reservations = await Reservation.find().populate('apartmentId', 'name'); // Asegúrate de que esta función sea válida
     res.json(reservations);
   } catch (error) {
     res.status(500).json({ error: error.message });

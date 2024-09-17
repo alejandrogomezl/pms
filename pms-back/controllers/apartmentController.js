@@ -1,4 +1,3 @@
-// controllers/apartmentController.js
 const Apartment = require('../models/Apartment');
 const Reservation = require('../models/Reservation');
 
@@ -13,12 +12,16 @@ const getAvailableApartments = async (req, res) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Encuentra las reservas que se solapan con las fechas proporcionadas
+    // Encuentra las reservas que se solapan con las fechas proporcionadas (excluyendo el último día de la reserva)
     const conflictingReservations = await Reservation.find({
       $or: [
-        { startDate: { $lte: end, $gte: start } }, // Reservas que empiezan dentro del rango dado
-        { endDate: { $gte: start, $lte: end } },   // Reservas que terminan dentro del rango dado
-        { startDate: { $lte: start }, endDate: { $gte: end } } // Reservas que cubren todo el rango
+        // Caso donde las reservas se solapan (excepto el último día)
+        {
+          $and: [
+            { startDate: { $lt: end } }, // La reserva existente empieza antes del final de la nueva reserva
+            { endDate: { $gt: start } }, // La reserva existente termina después del inicio de la nueva reserva
+          ]
+        },
       ]
     }).select('apartmentId'); // Solo seleccionamos los IDs de los apartamentos en conflicto
 
