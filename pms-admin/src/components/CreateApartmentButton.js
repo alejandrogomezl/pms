@@ -1,7 +1,7 @@
 // src/components/CreateApartmentButton.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/CreateApartmentButton.scss'; // Asegúrate de crear un archivo CSS para estilos si lo necesitas
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CreateApartmentButton = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const CreateApartmentButton = () => {
   };
 
   return (
-    <button className="create-apartment-button" onClick={handleClick}>
+    <button className="btn btn-primary my-4" onClick={handleClick}>
       Crear Nuevo Apartamento
     </button>
   );

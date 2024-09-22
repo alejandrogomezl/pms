@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ApartmentList from '../components/ApartmentList'; // Asegúrate de que la ruta es correcta
-import '../css/ApartmentsPage.scss'; // Asegúrate de que la ruta es correcta
 import CreateApartmentButton from '../components/CreateApartmentButton';
 
 const ApartmentsPage = () => {

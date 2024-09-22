@@ -3,8 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import CalendarPrice from '../components/CalendarPrice';
 import PriceList from '../components/PriceList';
-import '../css/ToggleSwitch.scss'; // Archivo CSS para el toggle switch
-import '../css/Price.scss'; // Archivo CSS para la página de precios
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 
 const Price = () => {
   const { apartmentId } = useParams();
@@ -59,15 +58,22 @@ const Price = () => {
   };
 
   return (
-    <div>
-      <h2>{apartment ? `Precio del Apartamento - ${apartment.name}` : 'Cargando...'}</h2>
+    <div className="container mt-4">
+      <h2>{apartment ? `Precios del Apartamento - ${apartment.name}` : 'Cargando...'}</h2>
 
-      {/* Toggle Switch para cambiar entre la vista de tabla y calendario */}
-      <label className="switch">
-        <input type="checkbox" onChange={toggleViewMode} checked={viewMode === 'calendar'} />
-        <span className="slider round"></span>
-      </label>
-      <span>{viewMode === 'table' ? 'Tabla' : 'Calendario'}</span>
+      {/* Toggle Switch usando Bootstrap */}
+      <div className="form-check form-switch mt-3">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id="viewSwitch"
+          onChange={toggleViewMode}
+          checked={viewMode === 'calendar'}
+        />
+        <label className="form-check-label" htmlFor="viewSwitch">
+          {viewMode === 'table' ? 'Vista de Tabla' : 'Vista de Calendario'}
+        </label>
+      </div>
 
       {viewMode === 'table' ? (
         <PriceList prices={prices} apartmentId={apartmentId} onPriceAdded={fetchPrices} />

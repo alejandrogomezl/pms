@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../css/CreateApartmentPage.scss';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de tener Bootstrap instalado
 
 const CreateApartmentPage = () => {
   const navigate = useNavigate();
@@ -35,26 +35,73 @@ const CreateApartmentPage = () => {
   };
 
   return (
-    <div className="create-apartment-container">
-      <h2>Crear Nuevo Apartamento</h2>
-      <form onSubmit={handleSubmit} className="create-apartment-form">
-        <label htmlFor="name">Name:</label>
-        <input type="text" name="name" value={apartment.name} onChange={handleChange} required />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <h2 className="text-center mb-4">Crear Nuevo Apartamento</h2>
+          <form onSubmit={handleSubmit} className="card p-4 shadow">
+            <div className="form-group mb-3">
+              <label htmlFor="name">Nombre:</label>
+              <input 
+                type="text" 
+                className="form-control" 
+                name="name" 
+                value={apartment.name} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <label htmlFor="description">Description:</label>
-        <textarea name="description" value={apartment.description} onChange={handleChange} required />
+            <div className="form-group mb-3">
+              <label htmlFor="description">Descripción:</label>
+              <textarea 
+                className="form-control" 
+                name="description" 
+                value={apartment.description} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <label htmlFor="price">Price:</label>
-        <input type="number" name="price" value={apartment.price} onChange={handleChange} required />
+            <div className="form-group mb-3">
+              <label htmlFor="price">Precio:</label>
+              <input 
+                type="number" 
+                className="form-control" 
+                name="price" 
+                value={apartment.price} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <label htmlFor="services">Services (comma separated):</label>
-        <input type="text" name="services" value={apartment.services} onChange={handleChange} required />
+            <div className="form-group mb-3">
+              <label htmlFor="services">Servicios (separados por comas):</label>
+              <input 
+                type="text" 
+                className="form-control" 
+                name="services" 
+                value={apartment.services} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <label htmlFor="imageUrl">Image URL:</label>
-        <input type="text" name="imageUrl" value={apartment.imageUrl} onChange={handleChange} />
+            <div className="form-group mb-3">
+              <label htmlFor="imageUrl">URL de la imagen:</label>
+              <input 
+                type="text" 
+                className="form-control" 
+                name="imageUrl" 
+                value={apartment.imageUrl} 
+                onChange={handleChange} 
+              />
+            </div>
 
-        <button type="submit">Crear Apartamento</button>
-      </form>
+            <button type="submit" className="btn btn-primary w-100">Crear Apartamento</button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

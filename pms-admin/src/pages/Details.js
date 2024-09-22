@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../css/Details.scss'; // Importa el archivo CSS que ya hemos creado
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 
 const Details = () => {
-  const { reservationId } = useParams(); // Obtener reservationId de la URL
-  const [reservation, setReservation] = useState(null); // Estado para almacenar los detalles de la reserva
-  const [isEditing, setIsEditing] = useState(false); // Estado para controlar la edición
-  const navigate = useNavigate(); // Para redirigir después de eliminar
+  const { reservationId } = useParams();
+  const [reservation, setReservation] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchReservationDetails(); // Obtener los detalles de la reserva al cargar la página
+    fetchReservationDetails();
   }, [reservationId]);
 
-  // Función para obtener los detalles de la reserva
   const fetchReservationDetails = async () => {
     try {
       const response = await axios.get(`http://localhost:3000/api/reservations/${reservationId}`);
@@ -25,7 +24,6 @@ const Details = () => {
     }
   };
 
-  // Función para manejar la edición de la reserva
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
@@ -37,81 +35,88 @@ const Details = () => {
     }
   };
 
-  // Función para manejar la eliminación de la reserva
   const handleDelete = async () => {
     try {
       await axios.delete(`http://localhost:3000/api/reservations/${reservationId}`);
       alert('Reserva eliminada correctamente');
-      navigate('/reservations'); // Redirigir a la lista de reservas
+      navigate('/reservations');
     } catch (error) {
       console.error('Error al eliminar la reserva:', error);
     }
   };
 
-  // Función para manejar la creación de la factura
   const handleCreateBill = () => {
-    navigate(`/bill/${reservationId}`); // Redirigir a la página de facturación
+    navigate(`/bill/${reservationId}`);
   };
 
-  // Manejo del estado de los campos para la edición
   const handleChange = (e) => {
     setReservation({ ...reservation, [e.target.name]: e.target.value });
   };
 
   if (loading) {
-    return <p className="loading-message">Cargando...</p>;
+    return <p className="text-center">Cargando...</p>;
   }
 
   if (!reservation) {
-    return <p className="loading-message">No se encontraron detalles de la reserva.</p>;
+    return <p className="text-center">No se encontraron detalles de la reserva.</p>;
   }
 
   return (
-    <div className="details-container">
-      <h2>Detalles de la Reserva</h2>
+    <div className="container mt-4">
+      <h2 className="text-center">Detalles de la Reserva</h2>
       {isEditing ? (
-        <form onSubmit={handleEdit} className="details-form">
-          <div>
-            <label>Nombre:</label>
-            <input
-              type="text"
-              name="firstName"
-              value={reservation.firstName}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={reservation.lastName}
-              onChange={handleChange}
-              required
-            />
+        <form onSubmit={handleEdit} className="mt-3">
+          <div className="mb-3">
+            <label>Nombre</label>
+            <div className="row">
+              <div className="col">
+                <input
+                  type="text"
+                  name="firstName"
+                  value={reservation.firstName}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="text"
+                  name="lastName"
+                  value={reservation.lastName}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <label>Fecha de Llegada:</label>
+          <div className="mb-3">
+            <label>Fecha de Llegada</label>
             <input
               type="date"
               name="startDate"
               value={new Date(reservation.startDate).toISOString().substring(0, 10)}
               onChange={handleChange}
+              className="form-control"
               required
             />
           </div>
-          <div>
-            <label>Fecha de Salida:</label>
+          <div className="mb-3">
+            <label>Fecha de Salida</label>
             <input
               type="date"
               name="endDate"
               value={new Date(reservation.endDate).toISOString().substring(0, 10)}
               onChange={handleChange}
+              className="form-control"
               required
             />
           </div>
-          <button type="submit">Guardar Cambios</button>
+          <button type="submit" className="btn btn-success">Guardar Cambios</button>
         </form>
       ) : (
-        <div className="details-info">
+        <div className="mt-3">
           <p><strong>ID de Reserva:</strong> {reservation.reservationId}</p>
           <p><strong>Nombre:</strong> {reservation.firstName} {reservation.lastName}</p>
           <p><strong>Fecha de Llegada:</strong> {new Date(reservation.startDate).toLocaleDateString()}</p>
@@ -120,13 +125,9 @@ const Details = () => {
           <p><strong>DNI:</strong> {reservation.dni}</p>
           <p><strong>Plataforma:</strong> {reservation.platform}</p>
           <p><strong>Apartamento:</strong> {reservation.apartmentId.name}</p>
-          <button onClick={() => setIsEditing(true)}>Editar</button>
-          <button onClick={handleDelete} className="delete-button">
-            Eliminar Reserva
-          </button>
-          <button onClick={handleCreateBill}>
-            Crear Factura
-          </button>
+          <button onClick={() => setIsEditing(true)} className="btn btn-primary me-2">Editar</button>
+          <button onClick={handleDelete} className="btn btn-danger me-2">Eliminar Reserva</button>
+          <button onClick={handleCreateBill} className="btn btn-secondary">Crear Factura</button>
         </div>
       )}
     </div>

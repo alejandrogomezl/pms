@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import ReservationsTable from '../components/ReservationsTable';
-import '../css/Dashboard.scss'; // Usamos el CSS del Dashboard
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 
 const ReservationsInd = () => {
   const { apartmentId } = useParams();
   const [reservations, setReservations] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [sortBy, setSortBy] = useState('startDate'); // Campo por defecto
-  const [sortOrder, setSortOrder] = useState('asc'); // Orden por defecto
-  const [currentPage, setCurrentPage] = useState(1); // Página actual
-  const [pageSize] = useState(10); // Tamaño de página
-  const [totalReservations, setTotalReservations] = useState(0); // Total de reservas
+  const [sortBy, setSortBy] = useState('startDate');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalReservations, setTotalReservations] = useState(0);
 
   useEffect(() => {
     fetchReservations();
@@ -23,17 +23,9 @@ const ReservationsInd = () => {
     try {
       const apiUrl = `http://localhost:3000/api/reservations/res/${apartmentId}`;
 
-      const params = {
-        sortBy,
-        sortOrder,
-        page: currentPage,
-        limit: pageSize,
-      };
-
+      const params = { sortBy, sortOrder, page: currentPage, limit: pageSize };
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
-
-      console.log('Fetching reservations with params:', params);
 
       const response = await axios.get(apiUrl, { params });
       setReservations(response.data.reservations);
@@ -43,29 +35,9 @@ const ReservationsInd = () => {
     }
   };
 
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
-  };
-
   const handleSort = (column) => {
-    // Ciclo de orden: ascendente -> descendente -> por defecto
-    if (sortBy === column) {
-      if (sortOrder === 'asc') {
-        setSortOrder('desc'); // Cambia a descendente
-      } else if (sortOrder === 'desc') {
-        setSortBy(null); // Reinicia el campo a sin orden
-        setSortOrder(null);
-      } else {
-        setSortOrder('asc'); // Cambia a ascendente
-      }
-    } else {
-      setSortBy(column);
-      setSortOrder('asc'); // Nuevo campo, empieza en ascendente
-    }
+    setSortBy(column);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   const handlePageChange = (newPage) => {
@@ -75,13 +47,29 @@ const ReservationsInd = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="container mt-5">
       <h2>Todas las Reservas</h2>
-      <div className="filter-container">
-        <label>Fecha Inicio:</label>
-        <input type="date" value={startDate} onChange={handleStartDateChange} />
-        <label>Fecha Fin:</label>
-        <input type="date" value={endDate} onChange={handleEndDateChange} />
+      <div className="row mb-4">
+        <div className="col-md-6">
+          <label htmlFor="startDate">Fecha Inicio:</label>
+          <input
+            type="date"
+            id="startDate"
+            className="form-control"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="endDate">Fecha Fin:</label>
+          <input
+            type="date"
+            id="endDate"
+            className="form-control"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
       </div>
       <ReservationsTable
         reservations={reservations}
@@ -89,12 +77,20 @@ const ReservationsInd = () => {
         sortBy={sortBy}
         sortOrder={sortOrder}
       />
-      <div className="pagination-controls">
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+      <div className="d-flex justify-content-between align-items-center mt-4">
+        <button
+          className="btn btn-secondary"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
           Anterior
         </button>
         <span>Página {currentPage} de {Math.ceil(totalReservations / pageSize)}</span>
-        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(totalReservations / pageSize)}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === Math.ceil(totalReservations / pageSize)}
+        >
           Siguiente
         </button>
       </div>

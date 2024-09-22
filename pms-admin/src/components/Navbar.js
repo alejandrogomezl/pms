@@ -10,11 +10,11 @@ const Navbar = () => {
         <img src={logo} alt="Alejandro Gomez" />
       </div>
       <div className="navbar-links">
-        <NavLink to="/" activeClassName="active">Dashboard</NavLink>
-        <NavLink to="/calendar" activeClassName="active">Calendario</NavLink>
-        <NavLink to="/apartments" activeClassName="active">Apartamentos</NavLink>
-        <NavLink to="/access" activeClassName="active">Acceso</NavLink>
-        <NavLink to="/settings" activeClassName="active">Configuración</NavLink>
+        <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
+        <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>Calendario</NavLink>
+        <NavLink to="/apartments" className={({ isActive }) => (isActive ? 'active' : '')}>Apartamentos</NavLink>
+        <NavLink to="/access" className={({ isActive }) => (isActive ? 'active' : '')}>Acceso</NavLink>
+        <NavLink to="/settings" className={({ isActive }) => (isActive ? 'active' : '')}>Configuración</NavLink>
       </div>
     </nav>
   );

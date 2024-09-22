@@ -1,12 +1,11 @@
-// src/pages/EditApartmentPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../css/EditApartmentPage.scss';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 
 const EditApartmentPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Cambiar useHistory a useNavigate
+  const navigate = useNavigate();
   const [apartment, setApartment] = useState({
     name: '',
     description: '',
@@ -17,7 +16,6 @@ const EditApartmentPage = () => {
 
   useEffect(() => {
     // Fetch apartment details
-    console.log("id")
     axios.get(`http://localhost:3000/api/apartments/${id}`)
       .then(response => {
         setApartment(response.data);
@@ -40,7 +38,7 @@ const EditApartmentPage = () => {
     axios.put(`http://localhost:3000/api/apartments/${id}`, apartment)
       .then(response => {
         alert('Apartment updated successfully!');
-        navigate(`/apartments`); // Cambiar history.push a navigate
+        navigate('/apartments');
       })
       .catch(error => {
         console.error('Error updating apartment:', error);
@@ -49,25 +47,68 @@ const EditApartmentPage = () => {
   };
 
   return (
-    <div className="edit-apartment-container">
-      <h2>Edit Apartment</h2>
-      <form onSubmit={handleSubmit} className="edit-apartment-form">
-        <label htmlFor="name">Name:</label>
-        <input type="text" name="name" value={apartment.name} onChange={handleChange} required />
+    <div className="container mt-4">
+      <h2 className="text-center mb-4">Editar Apartamento</h2>
+      <form onSubmit={handleSubmit} className="form-group">
+        <div className="mb-3">
+          <label htmlFor="name">Nombre:</label>
+          <input
+            type="text"
+            name="name"
+            value={apartment.name}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <label htmlFor="description">Description:</label>
-        <textarea name="description" value={apartment.description} onChange={handleChange} required />
+        <div className="mb-3">
+          <label htmlFor="description">Descripción:</label>
+          <textarea
+            name="description"
+            value={apartment.description}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <label htmlFor="price">Price:</label>
-        <input type="number" name="price" value={apartment.price} onChange={handleChange} required />
+        <div className="mb-3">
+          <label htmlFor="price">Precio:</label>
+          <input
+            type="number"
+            name="price"
+            value={apartment.price}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <label htmlFor="services">Services (comma separated):</label>
-        <input type="text" name="services" value={apartment.services} onChange={handleChange} required />
+        <div className="mb-3">
+          <label htmlFor="services">Servicios (separados por comas):</label>
+          <input
+            type="text"
+            name="services"
+            value={apartment.services}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <label htmlFor="imageUrl">Image URL:</label>
-        <input type="text" name="imageUrl" value={apartment.imageUrl} onChange={handleChange} />
+        <div className="mb-3">
+          <label htmlFor="imageUrl">URL de Imagen:</label>
+          <input
+            type="text"
+            name="imageUrl"
+            value={apartment.imageUrl}
+            onChange={handleChange}
+            className="form-control"
+          />
+        </div>
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" className="btn btn-primary">Guardar Cambios</button>
       </form>
     </div>
   );

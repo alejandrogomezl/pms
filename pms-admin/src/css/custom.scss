@@ -1,0 +1,9 @@
+// src/scss/custom-bootstrap.scss
+// Sobrescribe variables predeterminadas antes de importar Bootstrap
+$primary: #22aeff; // Cambia el color primario a un tono anaranjado
+$secondary: #607d8b; // Cambia el color secundario
+$success: #4caf50; // Cambia el color de éxito
+$danger: #f44336; // Cambia el color de peligro
+
+// Importa Bootstrap
+@import "~bootstrap/scss/bootstrap";

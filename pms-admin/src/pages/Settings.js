@@ -9,16 +9,16 @@ const SettingsPage = () => {
     apiKey: '',
     token: ''
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchSettings(activeTab);
+    setLoading(true);
+    fetchSettings(activeTab).finally(() => setLoading(false));
   }, [activeTab]);
 
   const fetchSettings = async (serviceName) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/settings/${serviceName}`);
-
-      // Asegúrate de que los campos se mantengan vacíos si no hay datos
       setFormData({
         apiUrl: response.data.apiUrl || '',
         apiKey: response.data.apiKey || '',
@@ -26,7 +26,6 @@ const SettingsPage = () => {
       });
     } catch (error) {
       console.error('Error fetching settings:', error);
-      // Si hay un error (por ejemplo, datos no encontrados), asegúrate de que los campos estén vacíos
       setFormData({
         apiUrl: '',
         apiKey: '',
@@ -41,6 +40,11 @@ const SettingsPage = () => {
   };
 
   const handleSave = async () => {
+    if (!formData.apiUrl || !formData.apiKey || !formData.token) {
+      alert('Todos los campos son obligatorios.');
+      return;
+    }
+
     try {
       await axios.post(`http://localhost:3000/api/settings/${activeTab}`, formData);
       alert('Settings saved successfully!');
@@ -53,58 +57,64 @@ const SettingsPage = () => {
   return (
     <div className="settings-container">
       <h2>Settings</h2>
-      <div className="tabs">
-        <button
-          className={activeTab === 'SmartLock' ? 'active' : ''}
-          onClick={() => setActiveTab('SmartLock')}
-        >
-          Smart Lock
-        </button>
-        <button
-          className={activeTab === 'AirBnB' ? 'active' : ''}
-          onClick={() => setActiveTab('AirBnB')}
-        >
-          AirBnB
-        </button>
-        <button
-          className={activeTab === 'Booking' ? 'active' : ''}
-          onClick={() => setActiveTab('Booking')}
-        >
-          Booking
-        </button>
-      </div>
-      <div className="tab-content">
-        <div className="form-group">
-          <label>API URL:</label>
-          <input
-            type="text"
-            name="apiUrl"
-            value={formData.apiUrl}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>API Key:</label>
-          <input
-            type="text"
-            name="apiKey"
-            value={formData.apiKey}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Token:</label>
-          <input
-            type="text"
-            name="token"
-            value={formData.token}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button className="save-button" onClick={handleSave}>
-          Save
-        </button>
-      </div>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : (
+        <>
+          <div className="tabs">
+            <button
+              className={activeTab === 'SmartLock' ? 'active' : ''}
+              onClick={() => setActiveTab('SmartLock')}
+            >
+              Smart Lock
+            </button>
+            <button
+              className={activeTab === 'AirBnB' ? 'active' : ''}
+              onClick={() => setActiveTab('AirBnB')}
+            >
+              AirBnB
+            </button>
+            <button
+              className={activeTab === 'Booking' ? 'active' : ''}
+              onClick={() => setActiveTab('Booking')}
+            >
+              Booking
+            </button>
+          </div>
+          <div className="tab-content">
+            <div className="form-group">
+              <label>API URL:</label>
+              <input
+                type="text"
+                name="apiUrl"
+                value={formData.apiUrl}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>API Key:</label>
+              <input
+                type="text"
+                name="apiKey"
+                value={formData.apiKey}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Token:</label>
+              <input
+                type="text"
+                name="token"
+                value={formData.token}
+                onChange={handleInputChange}
+              />
+            </div>
+            <button className="save-button" onClick={handleSave}>
+              Save
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

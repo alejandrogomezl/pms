@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../css/ApartmentList.scss'; // Asegúrate de que la ruta del archivo CSS sea correcta
+import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de que Bootstrap esté importado
 
 const ApartmentList = ({ apartments }) => {
   if (!apartments || apartments.length === 0) {
@@ -8,26 +8,39 @@ const ApartmentList = ({ apartments }) => {
   }
 
   return (
-    <div className="apartment-list">
-      {apartments.map((apartment) => (
-        <div key={apartment._id} className="apartment-item">
-          <div className="apartment-image-container">
-            <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
+    <div className="container my-4">
+      <div className="row">
+        {apartments.map((apartment) => (
+          <div key={apartment._id} className="col-md-6 mb-4">
+            <div className="card h-100">
+              <div className="row no-gutters">
+                <div className="col-md-4">
+                  <img
+                    src={apartment.imageUrl}
+                    alt={apartment.name}
+                    className="img-fluid rounded-start"  // Clase de Bootstrap para imágenes
+                  />
+                </div>
+                <div className="col-md-8">
+                  <div className="card-body">
+                    <h5 className="card-title">{apartment.name}</h5>
+                    <p className="card-text">{apartment.description}</p>
+                    <p className="card-text">
+                      <small className="text-muted">Servicios: {apartment.services}</small>
+                    </p>
+                    <div className="d-flex flex-column">
+                      <Link to={`/edit/${apartment._id}`} className="btn btn-primary mb-2">Editar</Link>
+                      <Link to={`/reservations/${apartment._id}`} className="btn btn-primary mb-2">Ver Reservas</Link>
+                      <Link to={`/apartments/${apartment._id}`} className="btn btn-primary mb-2">Acceso</Link>
+                      <Link to={`/price/${apartment._id}`} className="btn btn-primary">Precio</Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="apartment-info">
-            <h2>{apartment.name}</h2>
-            <p>{apartment.description}</p>
-            Servicios:
-            <p>{apartment.services}</p>
-          </div>
-          <div className="apartment-options">
-            <Link to={`/edit/${apartment._id}`} className="reserve-button">Editar</Link>
-            <Link to={`/reservations/${apartment._id}`} className="reserve-button">Ver Reservas</Link>
-            <Link to={`/apartments/${apartment._id}`} className="reserve-button">Acceso</Link>
-            <Link to={`/price/${apartment._id}`} className="reserve-button">Precio</Link>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

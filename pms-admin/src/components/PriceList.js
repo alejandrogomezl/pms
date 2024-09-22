@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../css/PriceList.scss'; // Estilos para la tabla y el formulario
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importa Bootstrap
 
 const PriceList = ({ prices, apartmentId, onPriceAdded }) => {
   const [showForm, setShowForm] = useState(false); // Estado para mostrar/ocultar el formulario
@@ -38,10 +38,10 @@ const PriceList = ({ prices, apartmentId, onPriceAdded }) => {
   };
 
   return (
-    <div>
-      <h3>Lista de Precios</h3>
-      <table className="price-list-table">
-        <thead>
+    <div className="container">
+      <h3 className="my-4">Lista de Precios</h3>
+      <table className="table table-bordered">
+        <thead className="thead-light">
           <tr>
             <th>Fecha de Inicio</th>
             <th>Fecha de Fin</th>
@@ -60,44 +60,52 @@ const PriceList = ({ prices, apartmentId, onPriceAdded }) => {
       </table>
 
       {/* Botón para mostrar el formulario */}
-      <button onClick={() => setShowForm(!showForm)}>
+      <button
+        onClick={() => setShowForm(!showForm)}
+        className="btn btn-primary my-3"
+      >
         {showForm ? 'Cancelar' : 'Añadir nuevo precio'}
       </button>
 
       {/* Formulario para añadir un nuevo precio */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="add-price-form">
-          <div>
+        <form onSubmit={handleSubmit} className="my-4">
+          <div className="form-group">
             <label htmlFor="startDate">Fecha de Inicio:</label>
             <input
               type="date"
               id="startDate"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
+              className="form-control"
               required
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="endDate">Fecha de Fin:</label>
             <input
               type="date"
               id="endDate"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
+              className="form-control"
               required
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor="price">Precio (€):</label>
             <input
               type="number"
               id="price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              className="form-control"
               required
             />
           </div>
-          <button type="submit">Guardar</button>
+          <button type="submit" className="btn btn-success">
+            Guardar
+          </button>
         </form>
       )}
     </div>
