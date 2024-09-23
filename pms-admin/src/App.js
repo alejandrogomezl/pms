@@ -14,6 +14,7 @@ import Price from './pages/Price';
 import Details from './pages/Details';
 import BillPage from './pages/BillPage';
 import CalendarPage from './pages/Calendar';
+import Devices from './pages/Devices';
 
 function App() {
   return (
@@ -30,9 +31,10 @@ function App() {
         < Route path="/price/:apartmentId" Component={Price} />
         < Route path="/edit/:id" Component={EditApartmentPage} />
         < Route path="/create-apartment" element={<CreateApartmentPage />} />
-        <Route path="/details/:reservationId" element={<Details />} /> {/* Ruta para la página de detalles */}
-        <Route path="/bill/:reservationId" element={<BillPage />} /> {/* Ruta para la factura */}
-        <Route path="/calendar" element={<CalendarPage />} /> {/* Ruta para el calendario */}
+        <Route path="/details/:reservationId" element={<Details />} /> 
+        <Route path="/bill/:reservationId" element={<BillPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/devices/:apartmentId" element={<Devices />} />
         {/* Añadir las rutas para Documentos, Acceso y Configuración */}
       </Routes>
     </Router>
