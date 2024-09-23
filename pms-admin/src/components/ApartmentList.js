@@ -14,7 +14,7 @@ const ApartmentList = ({ apartments }) => {
           <div key={apartment._id} className="col-md-6 mb-4">
             <div className="card h-100">
               <div className="row no-gutters">
-                <div className="col-md-4">
+                <div className="col-md-4 d-flex justify-content-center align-items-center">
                   <img
                     src={apartment.imageUrl}
                     alt={apartment.name}

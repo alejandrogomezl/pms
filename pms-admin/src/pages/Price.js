@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import CalendarPrice from '../components/CalendarPrice';
+import ReusableCalendar from '../components/CalendarPrice';
 import PriceList from '../components/PriceList';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Price = () => {
   const { apartmentId } = useParams();
   const [events, setEvents] = useState([]);
   const [apartment, setApartment] = useState(null);
   const [prices, setPrices] = useState([]);
-  const [viewMode, setViewMode] = useState('table'); // Estado para controlar la vista (tabla o calendario)
+  const [viewMode, setViewMode] = useState('table'); 
 
   useEffect(() => {
     if (apartmentId) {
@@ -61,7 +61,6 @@ const Price = () => {
     <div className="container mt-4">
       <h2>{apartment ? `Precios del Apartamento - ${apartment.name}` : 'Cargando...'}</h2>
 
-      {/* Toggle Switch usando Bootstrap */}
       <div className="form-check form-switch mt-3">
         <input
           className="form-check-input"
@@ -78,7 +77,10 @@ const Price = () => {
       {viewMode === 'table' ? (
         <PriceList prices={prices} apartmentId={apartmentId} onPriceAdded={fetchPrices} />
       ) : (
-        <CalendarPrice events={events} />
+        <ReusableCalendar
+          events={events}
+          view="month"
+        />
       )}
     </div>
   );

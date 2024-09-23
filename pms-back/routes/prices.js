@@ -104,3 +104,54 @@ router.post('/set-prices/:apartmentId', async (req, res) => {
 });
 
 module.exports = router;
+
+// Eliminar un precio específico
+router.delete('/delete-price/:apartmentId/:priceId', async (req, res) => {
+  const { apartmentId, priceId } = req.params;
+
+  try {
+    // Eliminar el precio de la base de datos
+    const deletedPrice = await Price.findOneAndDelete({ _id: priceId, apartmentId });
+
+    if (!deletedPrice) {
+      return res.status(404).json({ message: 'Precio no encontrado' });
+    }
+
+    res.json({ message: 'Precio eliminado correctamente', price: deletedPrice });
+  } catch (error) {
+    console.error('Error al eliminar el precio:', error);
+    res.status(500).json({ message: 'Error al eliminar el precio' });
+  }
+});
+
+
+// Editar un precio específico
+router.put('/update-price/:apartmentId/:priceId', async (req, res) => {
+  const { apartmentId, priceId } = req.params;
+  const { startDate, endDate, price } = req.body;
+
+  console.log('Price ID:', priceId);
+  console.log('Apartment ID:', apartmentId);
+  console.log('Body recibido:', req.body);  // Verifica que el cuerpo de la solicitud tiene los datos correctos
+
+  try {
+    if (!startDate || !endDate || !price) {
+      return res.status(400).json({ message: 'Faltan campos obligatorios en el cuerpo de la solicitud.' });
+    }
+
+    const updatedPrice = await Price.findOneAndUpdate(
+      { _id: priceId, apartmentId },  // Asegúrate de que el ID del precio y el ID del apartamento sean correctos
+      { startDate: new Date(startDate), endDate: new Date(endDate), price },
+      { new: true }
+    );
+
+    if (!updatedPrice) {
+      return res.status(404).json({ message: 'Precio no encontrado' });
+    }
+
+    res.json({ message: 'Precio actualizado correctamente', price: updatedPrice });
+  } catch (error) {
+    console.error('Error al actualizar el precio:', error);
+    res.status(500).json({ message: 'Error al actualizar el precio' });
+  }
+});

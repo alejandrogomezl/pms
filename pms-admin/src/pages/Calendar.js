@@ -1,45 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
-import moment from 'moment';
-import 'moment/locale/es'; // Importar la localización de moment en español
 import { useNavigate } from 'react-router-dom';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
+import ReusableCalendar from '../components/CalendarPrice';
 import '../css/Calendar.scss';
-
-// Configurar moment para usar español
-moment.locale('es');
-
-// Crear el localizer en español
-const localizer = momentLocalizer(moment);
-
-// Mensajes personalizados en español para el calendario
-const messages = {
-  next: 'Siguiente',
-  previous: 'Anterior',
-  today: 'Hoy',
-  month: 'Mes',
-  week: 'Semana',
-  day: 'Día',
-  agenda: 'Agenda',
-  date: 'Fecha',
-  time: 'Hora',
-  event: 'Evento',
-  noEventsInRange: 'No hay eventos en este rango',
-};
 
 const CalendarPage = () => {
   const [reservations, setReservations] = useState([]);
   const [apartmentColors, setApartmentColors] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [view, setView] = useState('week'); // Vista por defecto: semana
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchReservations();
   }, []);
 
-  // Obtener reservas del backend
   const fetchReservations = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/reservations');
@@ -53,6 +27,7 @@ const CalendarPage = () => {
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),
         apartmentId: reservation.apartmentId._id,
+        backgroundColor: colors[reservation.apartmentId._id],
         allDay: true,
         reservationId: reservation._id
       }));
@@ -84,76 +59,27 @@ const CalendarPage = () => {
 
   const getColorFromHash = (str) => {
     const hash = hashString(str);
-    const color = '#' + ((hash >> 24) & 0xFF).toString(16).padStart(2, '0') +
-      ((hash >> 16) & 0xFF).toString(16).padStart(2, '0') +
-      ((hash >> 8) & 0xFF).toString(16).padStart(2, '0');
-    return color;
-  };
-
-  const eventStyleGetter = (event) => {
-    const backgroundColor = apartmentColors[event.apartmentId] || '#3174ad';
-    const style = {
-      backgroundColor: backgroundColor,
-      borderRadius: '5px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block',
-    };
-    return {
-      style: style,
-    };
+    return '#' + ((hash >> 24) & 0xFF).toString(16).padStart(2, '0') +
+           ((hash >> 16) & 0xFF).toString(16).padStart(2, '0') +
+           ((hash >> 8) & 0xFF).toString(16).padStart(2, '0');
   };
 
   const handleSelectEvent = (event) => {
     navigate(`/details/${event.reservationId}`);
   };
 
-  const handleDateChange = (e) => {
-    setSelectedDate(new Date(e.target.value));
-  };
-
-  // Función para manejar la navegación del calendario (botones de hoy, siguiente, anterior)
-  const handleNavigate = (newDate) => {
-    setSelectedDate(newDate); // Actualiza la fecha seleccionada al navegar
-  };
-
-  // Manejar el cambio de vista (semana, mes)
-  const handleViewChange = (newView) => {
-    setView(newView); // Actualiza la vista seleccionada (semana o mes)
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
   };
 
   return (
-    <div style={{ height: '80vh', padding: '20px' }}>
-      <h2>Calendario de Reservas</h2>
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="date-picker">Seleccionar Fecha: </label>
-        <input 
-          type="date" 
-          id="date-picker" 
-          value={moment(selectedDate).format('YYYY-MM-DD')} 
-          onChange={handleDateChange} 
-        />
-      </div>
-      <Calendar
-        localizer={localizer}
+    <div className="container mt-5">
+      <h2 className="display-4 text-center mb-4">Calendario de Reservas</h2>
+      <ReusableCalendar
         events={reservations}
-        startAccessor="start"
-        endAccessor="end"
-        date={selectedDate}
-        style={{ height: 500 }}
-        eventPropGetter={eventStyleGetter}
-        views={['week', 'month']}
-        defaultView={Views.WEEK}
-        view={view} // Establecer la vista actual
-        step={1440}
-        timeslots={1}
-        showMultiDayTimes={false}
-        dayLayoutAlgorithm="no-overlap"
-        onSelectEvent={handleSelectEvent}
-        onNavigate={handleNavigate} // Maneja la navegación (hoy, anterior, siguiente)
-        onView={handleViewChange} // Manejar el cambio de vista
-        messages={messages} // Añadir los mensajes personalizados en español
+        view="week"
+        onEventSelect={handleSelectEvent}
+        onDateChange={handleDateChange}
       />
     </div>
   );
