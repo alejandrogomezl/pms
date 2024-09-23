@@ -29,7 +29,7 @@ const ApartmentList = ({ apartments }) => {
                       <small className="text-muted">Servicios: {apartment.services}</small>
                     </p>
                     <div className="d-flex flex-column">
-                      <Link to={`/devices/${apartment._id}`} className="btn btn-primary">Control</Link>
+                      <Link to={`/devices/${apartment._id}`} className="btn btn-primary mb-2">Control</Link>
                       <Link to={`/edit/${apartment._id}`} className="btn btn-primary mb-2">Editar</Link>
                       <Link to={`/reservations/${apartment._id}`} className="btn btn-primary mb-2">Ver Reservas</Link>
                       <Link to={`/apartments/${apartment._id}`} className="btn btn-primary mb-2">Acceso</Link>

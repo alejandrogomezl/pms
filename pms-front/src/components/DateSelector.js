@@ -13,10 +13,15 @@ const DateSelector = ({ isSubmittedProp, onDatesChange }) => {
     setSelectedDates({ startDate, endDate });
   }, [startDate, endDate, setSelectedDates]);
 
+  // Obtén la fecha de hoy para usarla en las restricciones de fechas
+  const today = new Date().toISOString().split('T')[0];
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!startDate || !endDate) {
       setError('Por favor, selecciona ambas fechas.');
+    } else if (endDate < startDate) {
+      setError('La fecha de salida no puede ser anterior a la fecha de llegada.');
     } else {
       setError('');
       setIsSubmitted(true);
@@ -39,7 +44,13 @@ const DateSelector = ({ isSubmittedProp, onDatesChange }) => {
           className="form-control date-input"
           id="startDate"
           value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
+          onChange={(e) => {
+            setStartDate(e.target.value);
+            if (endDate && e.target.value > endDate) {
+              setEndDate(''); // Limpiar el endDate si se selecciona una startDate mayor
+            }
+          }}
+          min={today} // No permitir seleccionar fechas pasadas
         />
         <label htmlFor="endDate" className="form-label">Fecha Salida:</label>
         <input
@@ -48,6 +59,7 @@ const DateSelector = ({ isSubmittedProp, onDatesChange }) => {
           id="endDate"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
+          min={startDate || today} // El endDate no puede ser anterior al startDate
         />
         <button type="submit" className="search-button">Buscar</button>
         {error && <p className="error-message">{error}</p>}
