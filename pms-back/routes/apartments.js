@@ -10,10 +10,10 @@ const { getAvailableApartments } = require('../controllers/apartmentController')
 // routes/apartments.js
 router.post('/', async (req, res) => {
   try {
-    const { name, description, price, services, imageUrl } = req.body;
+    const { name, description, defaultPrice, services, imageUrl } = req.body;
 
     // Validar los datos
-    if (!name || !description || !price || !services || !imageUrl) {
+    if (!name || !description || !defaultPrice || !services || !imageUrl) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     const newApartment = new Apartment({
       name,
       description,
-      price,
+      defaultPrice,
       services: services.split(','), // Asegúrate de que los servicios se almacenen como un array
       imageUrl
     });

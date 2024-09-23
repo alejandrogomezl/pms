@@ -1,16 +1,24 @@
 const axios = require('axios');
 const { faker } = require('@faker-js/faker');
 
-// Asumimos que tienes IDs válidos de apartamentos disponibles
-const apartmentIds = [
-  '66b28fa5788b6539eddadf41', // Reemplaza estos con IDs reales de tu base de datos
-  '66b40bb1795418e57ed1af16',
-  '66d1b0d0830e0d5154381fd3'
-];
-
 // Mapa para almacenar las fechas ocupadas por cada apartamento
 const apartmentReservations = {};
 
+// Función para obtener los IDs de los apartamentos existentes a través de la API
+const fetchApartmentIds = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/apartments/all');
+    const apartments = response.data;
+
+    // Extraer los IDs de los apartamentos
+    return apartments.map(apartment => apartment._id);
+  } catch (error) {
+    console.error('Error fetching apartment IDs:', error.message);
+    return [];
+  }
+};
+
+// Función para obtener las reservas existentes de la API
 const fetchExistingReservations = async () => {
   try {
     const response = await axios.get('http://localhost:3000/api/reservations');
@@ -31,6 +39,7 @@ const fetchExistingReservations = async () => {
   }
 };
 
+// Función para generar una reserva aleatoria, evitando solapamientos
 const generateRandomReservation = (apartmentId) => {
   let startDate, endDate;
   let isOverlapping;
@@ -70,6 +79,7 @@ const generateRandomReservation = (apartmentId) => {
   };
 };
 
+// Función para crear una reserva a través de la API
 const createReservation = async (reservation) => {
   try {
     const response = await axios.post('http://localhost:3000/api/reservations', reservation);
@@ -79,16 +89,31 @@ const createReservation = async (reservation) => {
   }
 };
 
+// Función para generar las reservas
 const generateReservations = async (numReservations) => {
-  // Primero obtenemos las reservas existentes
-  await fetchExistingReservations();
+  try {
+    // Primero obtenemos los IDs de los apartamentos existentes
+    const apartmentIds = await fetchApartmentIds();
+    if (apartmentIds.length === 0) {
+      console.error('No se encontraron apartamentos.');
+      return;
+    }
 
-  // Luego generamos las nuevas reservas, asegurándonos de evitar solapamientos
-  for (let i = 0; i < numReservations; i++) {
-    const apartmentId = faker.helpers.arrayElement(apartmentIds);
-    const reservation = generateRandomReservation(apartmentId);
-    await createReservation(reservation);
+    // Luego obtenemos las reservas existentes
+    await fetchExistingReservations();
+
+    // Generamos las nuevas reservas, asegurándonos de evitar solapamientos
+    for (let i = 0; i < numReservations; i++) {
+      const apartmentId = faker.helpers.arrayElement(apartmentIds);
+      const reservation = generateRandomReservation(apartmentId);
+      await createReservation(reservation);
+    }
+
+    console.log(`${numReservations} reservas creadas exitosamente.`);
+  } catch (error) {
+    console.error('Error al generar las reservas:', error.message);
   }
 };
 
-generateReservations(30);
+// Ejecuta la función para crear las reservas
+generateReservations(1000);
