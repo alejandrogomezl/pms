@@ -1,32 +1,28 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // Importamos useLocation
 import '../css/ReservationForm.scss';
 import { DateContext } from '../context/DateContext';
 
 const ReservationForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [apartment, setApartment] = useState(null);
+  const location = useLocation(); // Obtenemos el state pasado por la navegación
   const { selectedDates } = useContext(DateContext);
+
+  // Obtenemos los datos pasados desde la navegación (precio total y número de noches)
+  const { totalPrice, nightCount } = location.state || {};
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
   const [country, setCountry] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [documentType, setDocumentType] = useState('DNI'); // Estado para el tipo de documento
+  const [documentType, setDocumentType] = useState('DNI');
   const [dni, setDni] = useState('');
   const [email, setEmail] = useState('');
   const [bookingStatus, setBookingStatus] = useState('');
-
-  useEffect(() => {
-    axios.get(`http://localhost:3000/api/apartments/${id}`)
-      .then(response => {
-        setApartment(response.data);
-      })
-      .catch(error => console.error('Failed to fetch apartment details:', error));
-  }, [id]);
 
   const handleReservation = async (e) => {
     e.preventDefault();
@@ -41,7 +37,7 @@ const ReservationForm = () => {
         country,
         postalCode,
         phoneNumber,
-        documentType, // Agrega el tipo de documento en la solicitud
+        documentType,
         dni,
         email
       });
@@ -53,17 +49,15 @@ const ReservationForm = () => {
     }
   };
 
-  if (!apartment) return <div>Loading...</div>;
-
   return (
     <div className="reservation-form-container">
       <div className="apartment-info">
-        <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
+        <img src={location.state?.apartmentImageUrl || ''} alt={location.state?.apartmentName || ''} className="apartment-image" />
         <div className="apartment-details">
-          <h2>{apartment.name}</h2>
-          <p>Desde {selectedDates.startDate || "dd/mm/yyyy"} hasta {selectedDates.endDate || "dd/mm/yyyy"} | {apartment.nights || "x"} noches</p>
+          <h2>{location.state?.apartmentName || 'Apartamento'}</h2>
+          <p>Desde {selectedDates.startDate || "dd/mm/yyyy"} hasta {selectedDates.endDate || "dd/mm/yyyy"} | {nightCount || 'x'} noches</p>
           <div className="apartment-price">
-            <span>{apartment.price.toFixed(2)} €</span>
+            <span>Total: {totalPrice !== undefined ? `${totalPrice.toFixed(2)} €` : 'Calculando...'} €</span>
           </div>
         </div>
       </div>

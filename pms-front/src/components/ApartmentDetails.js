@@ -1,14 +1,19 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/ApartmentDetails.scss';
-import { DateContext } from '../context/DateContext';
 
 const ApartmentDetails = () => {
   const [apartment, setApartment] = useState(null);
-  const { id } = useParams();  // Extrae el id de la URL
+  const { id } = useParams(); // Extrae el id de la URL
   const navigate = useNavigate();
-  const { selectedDates } = useContext(DateContext);
+  const location = useLocation(); // Hook para acceder al estado pasado por el Link
+
+  // Asegúrate de acceder correctamente a location.state
+  const { totalPrice, nightCount } = location.state || {}; // Si no existe, al menos obtenemos un objeto vacío
+
+  // Agrega un console.log para verificar si los valores están llegando
+  console.log("Estado recibido en ApartmentDetails:", { totalPrice, nightCount });
 
   useEffect(() => {
     const fetchApartment = async () => {
@@ -40,18 +45,20 @@ const ApartmentDetails = () => {
           <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
         </div>
         <div className="apartment-info">
-        <h2 className="description-title">Descripción</h2>
+          <h2 className="description-title">Descripción</h2>
           <p className="description">{apartment.description}</p>
-          {/* <ul className="services-list">
-            {apartment.services && apartment.services.map((service, index) => (
-              <li key={index}>{service}</li>
-            ))}
-          </ul> */}
         </div>
       </div>
       <div className="apartment-reservation">
         <div className="price-container">
-          <span className="price">{apartment.price.toFixed(2)} €</span>
+          {/* Muestra el precio total si fue pasado por el Link */}
+          {totalPrice !== undefined ? (
+            <>
+              <span className="price">Total para {nightCount} noches: {totalPrice.toFixed(2)} €</span>
+            </>
+          ) : (
+            <span className="price">Calculando precio...</span>
+          )}
         </div>
         <button className="reserve-button" onClick={handleReservationClick}>Reservar</button>
       </div>

@@ -1,36 +1,64 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../css/ApartmentList.scss'; // Asegúrate de que la ruta es correcta
 
 const ApartmentList = ({ apartments, totalPrices, nightCounts }) => {
-  console.log(apartments);
+  const navigate = useNavigate();
+
   if (!apartments) {
     apartments = [];  // Maneja el caso de que 'apartments' sea undefined
   }
 
+  const handleNavigate = (apartmentId, totalPrice, nightCount, imageUrl) => {
+    navigate(`/apartments/${apartmentId}`, {
+      state: { 
+        totalPrice: totalPrice, 
+        nightCount: nightCount 
+      }
+    });
+    navigate(`/reserve/${apartmentId}`, {
+      state: { 
+        totalPrice: totalPrice, 
+        nightCount: nightCount, 
+        imageUrl: imageUrl
+      }
+    });
+  };
+
+
   return (
     <div className="apartment-list">
-      {apartments.map((apartment) => (
-        <div key={apartment._id} className="apartment-item">
-          <div className="apartment-image-container">
-            <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
-          </div>
-          <div className="apartment-info">
-            <h2>{apartment.name}</h2>
-            <p>{apartment.description}</p>
-            Servicios:
-            <p>{apartment.services}</p>
-          </div>
-          <div className="apartment-price-reserve">
-            <div className="apartment-price">
-              <span>Total para tu reserva:</span>
-              <p>{nightCounts && nightCounts[apartment._id] ? nightCounts[apartment._id] : 'Calculando...'} Noches</p>
-              <p>{totalPrices && totalPrices[apartment._id] ? totalPrices[apartment._id] : 'Calculando...'} €</p>
+      {apartments.map((apartment) => {
+        const totalPrice = totalPrices ? totalPrices[apartment._id] : undefined;
+        const nightCount = nightCounts ? nightCounts[apartment._id] : undefined;
+
+        return (
+          <div key={apartment._id} className="apartment-item">
+            <div className="apartment-image-container">
+              <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
             </div>
-            <Link to={`/apartments/${apartment._id}`} className="reserve-button">Reservar</Link>
+            <div className="apartment-info">
+              <h2>{apartment.name}</h2>
+              <p>{apartment.description}</p>
+              Servicios:
+              <p>{apartment.services}</p>
+            </div>
+            <div className="apartment-price-reserve">
+              <div className="apartment-price">
+                <span>Total para tu reserva:</span>
+                <p>{nightCount ? nightCount : 'Calculando...'} Noches</p>
+                <p>{totalPrice ? totalPrice : 'Calculando...'} €</p>
+              </div>
+              <button 
+                className="reserve-button"
+                onClick={() => handleNavigate(apartment._id, totalPrice, nightCount)}
+              >
+                Reservar
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
