@@ -9,58 +9,71 @@ const ApartmentDetails = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Hook para acceder al estado pasado por el Link
 
-  // Asegúrate de acceder correctamente a location.state
-  const { totalPrice, nightCount } = location.state || {}; // Si no existe, al menos obtenemos un objeto vacío
+  // Extraemos el estado pasado por el Link (si está disponible)
+  const { totalPrice, nightCount, imageUrl, name, description, services } = location.state || {};
 
-  // Agrega un console.log para verificar si los valores están llegando
-  console.log("Estado recibido en ApartmentDetails:", { totalPrice, nightCount });
-
-  useEffect(() => {
-    const fetchApartment = async () => {
-      const url = `http://localhost:3000/api/apartments/${id}`;
-      try {
-        const response = await axios.get(url);
-        setApartment(response.data);
-      } catch (error) {
-        console.error("Error fetching apartment details:", error);
+  // Función para manejar la navegación a la página de reserva
+  const handleNavigate = (apartmentId, totalPrice, nightCount, imageUrl, name, description, services) => {
+    navigate(`/reserve/${apartmentId}`, {
+      state: { 
+        totalPrice, 
+        nightCount,
+        imageUrl,
+        name,
+        description,
+        services
       }
-    };
+    });
+  }
 
-    fetchApartment();
-  }, [id]);
+  // Este efecto debería cargar los datos del apartamento si no están pasados desde el Link
+  useEffect(() => {
+    if (!location.state) {
+      const fetchApartment = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/apartments/${id}`);
+          setApartment(response.data);
+        } catch (error) {
+          console.error('Error fetching apartment details:', error);
+        }
+      };
+      fetchApartment();
+    } else {
+      setApartment(location.state); // Si ya está en el estado, lo usamos
+    }
+  }, [id, location.state]);
 
-  const handleReservationClick = () => {
-    navigate(`/reserve/${id}`);
-  };
+  // Si los datos no están listos, muestra un mensaje de carga
+  if (!apartment) {
+    return <div>Loading...</div>;
+  }
 
-  if (!apartment) return <div>Loading...</div>;
-
+  // Renderizamos los detalles del apartamento
   return (
     <div className="apartment-details">
-      <div className="apartment-header">
-        <h1>{apartment.name}</h1>
-      </div>
-      <div className="apartment-content">
+      <div className="apartment-item">
         <div className="apartment-image-container">
-          <img src={apartment.imageUrl} alt={apartment.name} className="apartment-image" />
+          <img src={imageUrl || apartment.imageUrl} alt={name || apartment.name} className="apartment-image" />
         </div>
         <div className="apartment-info">
-          <h2 className="description-title">Descripción</h2>
-          <p className="description">{apartment.description}</p>
+          <h2>{name || apartment.name}</h2>
+          <p>{description || apartment.description}</p>
+          Servicios:
+          <p>{services || apartment.services}</p>
         </div>
-      </div>
-      <div className="apartment-reservation">
-        <div className="price-container">
-          {/* Muestra el precio total si fue pasado por el Link */}
-          {totalPrice !== undefined ? (
-            <>
-              <span className="price">Total para {nightCount} noches: {totalPrice.toFixed(2)} €</span>
-            </>
-          ) : (
-            <span className="price">Calculando precio...</span>
-          )}
+        <div className="apartment-price-reserve">
+          <div className="apartment-price">
+            <span>Total para tu reserva:</span>
+            <p>{nightCount || 'Calculando...'} Noches</p>
+            <p>{totalPrice !== undefined ? totalPrice : 'Calculando...'} €</p>
+          </div>
+          <button 
+            className="reserve-button"
+            onClick={() => handleNavigate(apartment._id, totalPrice, nightCount, imageUrl || apartment.imageUrl, name || apartment.name, description || apartment.description, services || apartment.services)}
+          >
+            Reservar
+          </button>
         </div>
-        <button className="reserve-button" onClick={handleReservationClick}>Reservar</button>
       </div>
     </div>
   );

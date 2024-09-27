@@ -75,7 +75,8 @@ const generateRandomReservation = (apartmentId) => {
     firstName: faker.person.firstName(),                   // Nombre del cliente
     lastName: faker.person.lastName(),                     // Apellido del cliente
     phoneNumber: faker.phone.number(),                     // Número de teléfono
-    dni: faker.string.alphanumeric(8)                      // Documento de identidad
+    dni: faker.string.alphanumeric(8),                      // Documento de identidad
+    price: faker.number.float({ min: 50, max: 2000, precision: 0.01 })  // Precio de la reserva
   };
 };
 

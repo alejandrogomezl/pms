@@ -25,7 +25,10 @@ const DateSelector = ({ isSubmittedProp, onDatesChange }) => {
     } else {
       setError('');
       setIsSubmitted(true);
-      onDatesChange({ startDate, endDate });
+      // Solo llamamos a onDatesChange si es una función
+      if (typeof onDatesChange === 'function') {
+        onDatesChange({ startDate, endDate });
+      }
     }
   };
 

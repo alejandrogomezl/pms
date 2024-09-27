@@ -24,7 +24,7 @@ const generateSecretCode = () => {
 };
 
 router.post('/', async (req, res) => {
-  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni, platform } = req.body;
+  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni, platform, price } = req.body;
 
   // Convertir las fechas de string a objetos Date
   const start = new Date(startDate);
@@ -73,7 +73,8 @@ router.post('/', async (req, res) => {
       phoneNumber,
       dni,
       secretCode,
-      platform: platform || 'Direct'
+      platform: platform || 'Direct',
+      price
     });
     await reservation.save();
     res.status(201).json({ message: 'Reservation created', reservation });

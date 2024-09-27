@@ -44,6 +44,10 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     enum: ['Booking', 'Airbnb', 'Direct'],
     default: 'Direct'
+  },
+  price: {
+    type: Number,
+    required: true
   }
 });
 

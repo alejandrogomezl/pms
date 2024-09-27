@@ -11,7 +11,8 @@ const ReservationForm = () => {
   const { selectedDates } = useContext(DateContext);
 
   // Obtenemos los datos pasados desde la navegación (precio total y número de noches)
-  const { totalPrice, nightCount } = location.state || {};
+  const { totalPrice, nightCount, imageUrl, name } = location.state || {};
+  console.log('location.state:', location.state);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -23,6 +24,7 @@ const ReservationForm = () => {
   const [dni, setDni] = useState('');
   const [email, setEmail] = useState('');
   const [bookingStatus, setBookingStatus] = useState('');
+  const price = totalPrice;
 
   const handleReservation = async (e) => {
     e.preventDefault();
@@ -39,7 +41,8 @@ const ReservationForm = () => {
         phoneNumber,
         documentType,
         dni,
-        email
+        email,
+        price
       });
       setBookingStatus('Reservation successful');
       setTimeout(() => navigate('/'), 2000); 
@@ -48,16 +51,15 @@ const ReservationForm = () => {
       console.error('Reservation error:', error);
     }
   };
-
   return (
     <div className="reservation-form-container">
       <div className="apartment-info">
-        <img src={location.state?.apartmentImageUrl || ''} alt={location.state?.apartmentName || ''} className="apartment-image" />
+        <img src={location.state?.imageUrl || ''} alt={location.state?.name || ''} className="apartment-image" />
         <div className="apartment-details">
-          <h2>{location.state?.apartmentName || 'Apartamento'}</h2>
+          <h2>{location.state?.name || 'Apartamento'}</h2>
           <p>Desde {selectedDates.startDate || "dd/mm/yyyy"} hasta {selectedDates.endDate || "dd/mm/yyyy"} | {nightCount || 'x'} noches</p>
           <div className="apartment-price">
-            <span>Total: {totalPrice !== undefined ? `${totalPrice.toFixed(2)} €` : 'Calculando...'} €</span>
+            <span>Total: {totalPrice !== undefined ? `${totalPrice.toFixed(2)} €` : 'Calculando...'}</span>
           </div>
         </div>
       </div>
