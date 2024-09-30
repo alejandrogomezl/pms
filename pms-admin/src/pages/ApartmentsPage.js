@@ -26,8 +26,8 @@ const ApartmentsPage = () => {
     <div className="container mt-5">
       {/* Encabezado */}
       <div className="text-center mb-4">
-        <h1 className="display-4">Available Apartments</h1>
-        <p className="lead text-muted">Find the perfect apartment for your stay</p>
+        <h1 className="display-4">Apartmentos</h1>
+        <p className="lead text-muted">Encuentra todos los apartamentos</p>
       </div>
 
       {/* Botón para crear un nuevo apartamento */}

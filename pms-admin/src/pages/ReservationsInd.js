@@ -14,20 +14,40 @@ const ReservationsInd = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [totalReservations, setTotalReservations] = useState(0);
+  const [apartment, setApartment] = useState(null); // Nuevo estado para almacenar la información del apartamento
 
   useEffect(() => {
+    if (apartmentId) {
+      fetchApartmentInfo();
+    }
     fetchReservations();
-  }, [startDate, endDate, sortBy, sortOrder, currentPage]);
+  }, [apartmentId, startDate, endDate, sortBy, sortOrder, currentPage]);
+
+  // Función para obtener la información del apartamento
+  const fetchApartmentInfo = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/apartments/${apartmentId}`);
+      setApartment(response.data); // Almacena la información del apartamento
+    } catch (error) {
+      console.error('Error fetching apartment information:', error);
+    }
+  };
 
   const fetchReservations = async () => {
     try {
-      const apiUrl = `http://localhost:3000/api/reservations/res/${apartmentId}`;
+      const params = {
+        sortBy,
+        sortOrder,
+        page: currentPage,
+        limit: pageSize
+      };
 
-      const params = { sortBy, sortOrder, page: currentPage, limit: pageSize };
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
+      if (apartmentId) params.apartmentId = apartmentId;
 
-      const response = await axios.get(apiUrl, { params });
+      const response = await axios.get('http://localhost:3000/api/reservations/res', { params });
+
       setReservations(response.data.reservations);
       setTotalReservations(response.data.totalReservations);
     } catch (error) {
@@ -36,8 +56,10 @@ const ReservationsInd = () => {
   };
 
   const handleSort = (column) => {
-    setSortBy(column);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    if (['reservationId', 'firstName', 'startDate', 'endDate', 'apartmentId'].includes(column)) {
+      setSortBy(column);
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    }
   };
 
   const handlePageChange = (newPage) => {
@@ -48,7 +70,7 @@ const ReservationsInd = () => {
 
   return (
     <div className="container mt-5">
-      <h2>Todas las Reservas</h2>
+      <h2>{apartment ? `Reservas - ${apartment.name}` : 'Cargando...'}</h2>
       <div className="row mb-4">
         <div className="col-md-6">
           <label htmlFor="startDate">Fecha Inicio:</label>

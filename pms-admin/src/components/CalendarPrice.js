@@ -54,7 +54,7 @@ const ReusableCalendar = ({ events, view, onEventSelect, onDateChange }) => {
           endAccessor="end"
           style={{ height: '100%', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px', boxShadow: '0 0 15px rgba(0,0,0,0.1)' }}
           eventPropGetter={eventStyleGetter}
-          views={['week', 'month']}
+          views={['week']}
           defaultView={view || "month"} // Vista predeterminada en mes o la vista pasada por props
           step={1440}
           timeslots={1}

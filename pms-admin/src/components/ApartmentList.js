@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de que Bootstrap esté importado
 
 const ApartmentList = ({ apartments }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Número de apartamentos por página
+
+  // Calcular el número total de páginas
+  const totalPages = Math.ceil(apartments.length / pageSize);
+
+  // Obtener los apartamentos que se mostrarán en la página actual
+  const paginatedApartments = apartments.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // Función para cambiar de página
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   if (!apartments || apartments.length === 0) {
     return <p>No apartments available.</p>;
   }
@@ -10,7 +29,7 @@ const ApartmentList = ({ apartments }) => {
   return (
     <div className="container my-4">
       <div className="row">
-        {apartments.map((apartment) => (
+        {paginatedApartments.map((apartment) => (
           <div key={apartment._id} className="col-md-6 mb-4">
             <div className="card h-100">
               <div className="row no-gutters">
@@ -18,7 +37,8 @@ const ApartmentList = ({ apartments }) => {
                   <img
                     src={apartment.imageUrl}
                     alt={apartment.name}
-                    className="img-fluid rounded-start"  // Clase de Bootstrap para imágenes
+                    className="img-fluid"
+                    style={{ borderRadius: '0.25rem', marginLeft: '30px' }} // Aplicar estilo en línea
                   />
                 </div>
                 <div className="col-md-8">
@@ -41,6 +61,25 @@ const ApartmentList = ({ apartments }) => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Paginación */}
+      <div className="d-flex justify-content-between mt-4">
+        <button
+          className="btn btn-secondary"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Anterior
+        </button>
+        <span>Página {currentPage} de {totalPages}</span>
+        <button
+          className="btn btn-secondary"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Siguiente
+        </button>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReusableCalendar from '../components/CalendarPrice';
+import randomColor from 'randomcolor'; // Importa randomcolor
 import '../css/Calendar.scss';
 
 const CalendarPage = () => {
@@ -19,6 +20,7 @@ const CalendarPage = () => {
       const response = await axios.get('http://localhost:3000/api/reservations');
       const fetchedReservations = response.data;
 
+      // Asignar colores únicos a cada apartamento
       const colors = assignColors(fetchedReservations);
       setApartmentColors(colors);
 
@@ -43,25 +45,19 @@ const CalendarPage = () => {
     reservations.forEach((reservation) => {
       const apartmentId = reservation.apartmentId._id;
       if (!colors[apartmentId]) {
-        colors[apartmentId] = getColorFromHash(apartmentId);
+        colors[apartmentId] = generateColor(apartmentId);
       }
     });
     return colors;
   };
 
-  const hashString = (str) => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-  };
-
-  const getColorFromHash = (str) => {
-    const hash = hashString(str);
-    return '#' + ((hash >> 24) & 0xFF).toString(16).padStart(2, '0') +
-           ((hash >> 16) & 0xFF).toString(16).padStart(2, '0') +
-           ((hash >> 8) & 0xFF).toString(16).padStart(2, '0');
+  // Usar randomcolor para generar colores únicos y consistentes
+  const generateColor = (apartmentId) => {
+    return randomColor({
+      seed: apartmentId, // Asegura que el color siempre sea el mismo para el mismo apartamento
+      luminosity: 'dark', // Esto genera colores claros
+      format: 'hex'
+    });
   };
 
   const handleSelectEvent = (event) => {

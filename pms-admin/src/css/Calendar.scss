@@ -1,4 +1,4 @@
-.rbc-time-content{
+.rbc-time-content,{
     display:none
 }
 
@@ -7,5 +7,9 @@
 }
 
 .rbc-time-header-content {
-    height: 460px;
+    height: auto;
+}
+
+.rbc-calendar, .rbc-calendar{
+    height: auto !important;
 }

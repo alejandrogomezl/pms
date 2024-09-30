@@ -97,10 +97,14 @@ router.get('/', async (req, res) => {
 // routes/reservations.js
 router.get('/res', async (req, res) => {
   try {
-    const { startDate, endDate, page = 1, limit = 10, sortBy = 'startDate', sortOrder = 'desc' } = req.query;
+    const { apartmentId, startDate, endDate, page = 1, limit = 10, sortBy = 'startDate', sortOrder = 'desc' } = req.query;
 
-    // Construir la consulta basada en los parámetros de fecha
+    // Construir la consulta basada en los parámetros de fecha y apartmentId
     const query = {};
+    if (apartmentId) {
+      query.apartmentId = apartmentId; // Filtrar por apartmentId si está presente
+    }
+
     if (startDate && !endDate) {
       query.startDate = { $gte: new Date(startDate) };
     } else if (!startDate && endDate) {
@@ -132,44 +136,6 @@ router.get('/res', async (req, res) => {
   }
 });
 
-
-router.get('/res/:apartmentId', async (req, res) => {
-  try {
-    const { apartmentId } = req.params;
-    const { startDate, endDate, page = 1, limit = 10, sortField = 'startDate', sortDirection = 'asc' } = req.query;
-
-    const query = { apartmentId };
-    
-    // Condicionales para manejar la existencia de solo una fecha
-    if (startDate && !endDate) {
-      query.startDate = { $gte: new Date(startDate) };
-    } else if (!startDate && endDate) {
-      query.endDate = { $lte: new Date(endDate) };
-    } else if (startDate && endDate) {
-      query.startDate = { $gte: new Date(startDate) };
-      query.endDate = { $lte: new Date(endDate) };
-    }
-
-    const totalReservations = await Reservation.countDocuments(query);
-
-    // Construir el objeto de ordenación
-    const sortOptions = {};
-    sortOptions[sortField] = sortDirection === 'asc' ? 1 : -1;
-
-    // Obtener las reservas paginadas y ordenadas
-    const reservations = await Reservation.find(query)
-      .populate('apartmentId', 'name')
-      .sort(sortOptions)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    // Devolver las reservas y el número total de reservas
-    res.json({ reservations, totalReservations });
-  } catch (error) {
-    console.error('Error fetching reservations:', error);
-    res.status(500).send('Error del servidor');
-  }
-});
 
 
 router.get('/:id', async (req, res) => {
