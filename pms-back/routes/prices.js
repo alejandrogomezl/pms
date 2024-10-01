@@ -8,65 +8,57 @@ const Price = require('../models/Price');
 // Obtener el precio total para un rango de fechas
 router.get('/get-prices/:apartmentId', async (req, res) => {
   const { apartmentId } = req.params;
-  const { startDate, endDate } = req.query; // Asegúrate de que estas fechas se pasan correctamente en la solicitud
+  const { startDate, endDate, mode = 'detailed' } = req.query;
 
   try {
-    // Validar si las fechas fueron proporcionadas
     if (!startDate || !endDate) {
       return res.status(400).json({ message: 'Faltan startDate o endDate en la solicitud' });
     }
 
-    // Buscar los precios en la base de datos
-    const prices = await Price.find({
-      apartmentId,
-      startDate: { $gte: new Date(startDate) },
-      endDate: { $lte: new Date(endDate) }
-    });
-
-    res.json({ prices });
-  } catch (error) {
-    console.error('Error al obtener los precios:', error);
-    res.status(500).json({ message: 'Error al obtener los precios' });
-  }
-});
-
-
-router.get('/get-total-price/:apartmentId', async (req, res) => {
-  const { apartmentId } = req.params;
-  const { startDate, endDate } = req.query;
-
-  try {
     const start = new Date(startDate);
     const end = new Date(endDate);
-
-    // Calcular el número de noches (diferencia en días)
     const diffTime = Math.abs(end - start);
-    const diffNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Cada noche es un día completo
+    const diffNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffNights <= 0) {
       return res.status(400).json({ message: 'Debe haber al menos una noche' });
     }
 
-    let totalPrice = 0;
-    let currentDate = start;
+    // Modo para calcular precio total
+    if (mode === 'total') {
+      let totalPrice = 0;
+      let currentDate = start;
 
-    // Iteramos sobre cada noche dentro del rango de fechas
-    for (let i = 0; i < diffNights; i++) {
-      const priceForNight = await getPriceForDate(apartmentId, currentDate);
-      totalPrice += priceForNight;
+      for (let i = 0; i < diffNights; i++) {
+        const priceForNight = await getPriceForDate(apartmentId, currentDate);
+        totalPrice += priceForNight;
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-      // Avanzamos al siguiente día
-      currentDate.setDate(currentDate.getDate() + 1);
+      return res.json({ totalPrice, diffNights });
     }
 
-    res.json({ totalPrice, diffNights });
+    // Modo para obtener precios detallados por cada día
+    if (mode === 'detailed') {
+      const prices = await Price.find({
+        apartmentId,
+        startDate: { $gte: new Date(startDate) },
+        endDate: { $lte: new Date(endDate) }
+      });
+
+      return res.json({ prices });
+    }
+
+    // Si el modo no es válido
+    return res.status(400).json({ message: 'Modo no válido. Usa "detailed" o "total"' });
+
   } catch (error) {
-    console.error('Error al calcular el precio total:', error);
-    res.status(500).json({ message: 'Error al calcular el precio total' });
+    console.error('Error en la ruta de precios:', error);
+    res.status(500).json({ message: 'Error al obtener los precios' });
   }
 });
 
-// routes/prices.js
+
 router.post('/set-prices/:apartmentId', async (req, res) => {
   const { apartmentId } = req.params;
   const { prices } = req.body;

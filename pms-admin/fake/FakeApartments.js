@@ -8,7 +8,6 @@ const API_URL = 'http://localhost:3000/api/apartments';
 const generateRandomApartment = () => ({
   name: faker.address.streetName() + ' Apartment',
   description: faker.lorem.sentence(),
-  price: faker.datatype.number({ min: 100, max: 500 }), // Precio entre 100 y 500
   imageUrl: faker.image.city(640, 480, true), // Imagen de ciudad aleatoria
   services: faker.helpers
     .arrayElements(['Wifi', 'TV', 'Lavadora', 'Piscina', 'Gimnasio', 'Jacuzzi'], faker.datatype.number({ min: 1, max: 4 }))
@@ -27,7 +26,7 @@ const createApartmentViaAPI = async (apartment) => {
 };
 
 // Función para crear 20 apartamentos
-const createApartments = async (count = 100) => {
+const createApartments = async (count = 1) => {
   const apartments = Array.from({ length: count }, () => generateRandomApartment());
   
   for (const apartment of apartments) {

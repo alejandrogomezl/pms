@@ -14,6 +14,11 @@ const PriceList = ({ prices, apartmentId, onPriceAdded }) => {
 
   const today = new Date(); // La fecha actual
 
+  // Función para normalizar una fecha y eliminar la parte de las horas
+  const normalizeDate = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+
   // Función para manejar el envío del formulario (crear o editar)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,8 +88,8 @@ const PriceList = ({ prices, apartmentId, onPriceAdded }) => {
     }
   };
 
-  // Filtrar los precios que tienen fecha de fin mayor a la fecha actual
-  const filteredPrices = prices.filter(price => new Date(price.endDate) >= today);
+  // Filtrar los precios que tienen fecha de fin mayor o igual a la fecha actual (sin horas)
+  const filteredPrices = prices.filter(price => normalizeDate(new Date(price.endDate)) >= normalizeDate(today));
 
   return (
     <div className="container">

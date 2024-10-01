@@ -76,12 +76,12 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, services, imageUrl } = req.body;
+  const { name, description, defaultPrice, services, imageUrl } = req.body;
 
   try {
     const updatedApartment = await Apartment.findByIdAndUpdate(
       id,
-      { name, description, price, services, imageUrl },
+      { name, description, defaultPrice, services, imageUrl },
       { new: true }
     );
 
@@ -96,29 +96,21 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.put('/set-default-price/:id', async (req, res) => {
-  const { id } = req.params;
-  const { defaultPrice } = req.body;
-
-  if (!defaultPrice || isNaN(defaultPrice)) {
-    return res.status(400).json({ message: 'Por favor, proporcione un precio válido' });
-  }
-
+router.delete('/:id', async (req, res) => {
   try {
-    const updatedApartment = await Apartment.findByIdAndUpdate(
-      id,
-      { defaultPrice },
-      { new: true }
-    );
+    const { id } = req.params;
 
-    if (!updatedApartment) {
+    // Intentar eliminar el apartamento
+    const deletedApartment = await Apartment.findByIdAndDelete(id);
+
+    if (!deletedApartment) {
       return res.status(404).json({ message: 'Apartamento no encontrado' });
     }
 
-    res.json({ message: 'Precio por defecto actualizado correctamente', apartment: updatedApartment });
+    res.json({ message: 'Apartamento eliminado correctamente', apartment: deletedApartment });
   } catch (error) {
-    console.error('Error al actualizar el precio por defecto:', error);
-    res.status(500).json({ message: 'Error al actualizar el precio por defecto' });
+    console.error('Error al eliminar apartamento:', error);
+    res.status(500).json({ message: 'Error al eliminar apartamento' });
   }
 });
 

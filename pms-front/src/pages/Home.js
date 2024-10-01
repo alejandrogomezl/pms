@@ -27,10 +27,12 @@ const Home = () => {
       const nightCalculations = {};
 
       for (const apartment of fetchedApartments) {
-        const priceResponse = await axios.get(`http://localhost:3000/api/prices/get-total-price/${apartment._id}`, {
+        // Utiliza la nueva ruta con el parámetro `mode=total` para obtener el precio total
+        const priceResponse = await axios.get(`http://localhost:3000/api/prices/get-prices/${apartment._id}`, {
           params: {
             startDate: dates.startDate,
-            endDate: dates.endDate
+            endDate: dates.endDate,
+            mode: 'total'  // Añade el modo para obtener el precio total
           }
         });
 
@@ -41,6 +43,7 @@ const Home = () => {
 
       setTotalPrices(priceCalculations); // Guardar los precios totales
       setNightCounts(nightCalculations); // Guardar el número de noches
+      setIsSubmitted(true); // Cambiar el estado de enviado para mostrar los apartamentos
 
     } catch (error) {
       console.error('Error fetching apartments or prices:', error);
@@ -52,7 +55,6 @@ const Home = () => {
       <NavBar />
       <DateSelector isSubmittedProp={isSubmitted} onDatesChange={handleDatesChange} />
       {isSubmitted && <ApartmentList apartments={apartments} totalPrices={totalPrices} nightCounts={nightCounts} />}
-      <ApartmentList apartments={apartments} totalPrices={totalPrices} nightCounts={nightCounts} />
     </div>
   );
 };
