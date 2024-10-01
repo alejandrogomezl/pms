@@ -10,15 +10,28 @@ const CalendarPage = () => {
   const [apartmentColors, setApartmentColors] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
   const navigate = useNavigate();
+  const pageSize = 10; // Número de resultados por página
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchReservations();
-  }, []);
+    fetchReservations(); // Cargar reservas al cargar la página
+  }, [selectedDate, currentPage]); // Recargar las reservas cuando cambia la fecha seleccionada o la página
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/reservations');
-      const fetchedReservations = response.data;
+      const startDate = new Date(selectedDate).toISOString().split('T')[0]; // Convertir la fecha seleccionada a formato YYYY-MM-DD
+
+      const response = await axios.get('http://localhost:3000/api/reservations', {
+        params: {
+          startDate, // Puedes ajustar el intervalo de fechas aquí
+          page: currentPage,
+          limit: pageSize,
+          sortBy: 'startDate',
+          sortOrder: 'asc' // Orden ascendente por fecha de inicio
+        }
+      });
+
+      const { reservations: fetchedReservations } = response.data;
 
       // Asignar colores únicos a cada apartamento
       const colors = assignColors(fetchedReservations);
@@ -28,8 +41,8 @@ const CalendarPage = () => {
         title: `${reservation.firstName} ${reservation.lastName} - ${reservation.apartmentId?.name || 'N/A'}`,
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),
-        apartmentId: reservation.apartmentId._id,
-        backgroundColor: colors[reservation.apartmentId._id],
+        apartmentId: reservation.apartmentId?._id,
+        backgroundColor: colors[reservation.apartmentId?._id],
         allDay: true,
         reservationId: reservation._id
       }));
@@ -43,8 +56,8 @@ const CalendarPage = () => {
   const assignColors = (reservations) => {
     const colors = {};
     reservations.forEach((reservation) => {
-      const apartmentId = reservation.apartmentId._id;
-      if (!colors[apartmentId]) {
+      const apartmentId = reservation.apartmentId?._id;
+      if (apartmentId && !colors[apartmentId]) {
         colors[apartmentId] = generateColor(apartmentId);
       }
     });
@@ -55,7 +68,7 @@ const CalendarPage = () => {
   const generateColor = (apartmentId) => {
     return randomColor({
       seed: apartmentId, // Asegura que el color siempre sea el mismo para el mismo apartamento
-      luminosity: 'dark', // Esto genera colores claros
+      luminosity: 'dark',
       format: 'hex'
     });
   };
@@ -66,6 +79,10 @@ const CalendarPage = () => {
 
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   return (

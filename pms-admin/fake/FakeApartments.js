@@ -26,7 +26,7 @@ const createApartmentViaAPI = async (apartment) => {
 };
 
 // Función para crear 20 apartamentos
-const createApartments = async (count = 1) => {
+const createApartments = async (count = 20) => {
   const apartments = Array.from({ length: count }, () => generateRandomApartment());
   
   for (const apartment of apartments) {

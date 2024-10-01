@@ -14,7 +14,7 @@ const ApartmentDetails = () => {
 
   // Función para manejar la navegación a la página de reserva
   const handleNavigate = (apartmentId, totalPrice, nightCount, imageUrl, name, description, services) => {
-    navigate(`/reserve/${apartmentId}`, {
+    navigate(`/reserve/${id}`, {
       state: { 
         totalPrice, 
         nightCount,

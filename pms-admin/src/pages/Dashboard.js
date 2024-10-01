@@ -19,7 +19,7 @@ const Dashboard = () => {
 
   const fetchReservations = async () => {
     try {
-      const apiUrl = 'http://localhost:3000/api/reservations/res';
+      const apiUrl = 'http://localhost:3000/api/reservations';
       const params = { sortBy, sortOrder, page: currentPage, limit: pageSize };
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;

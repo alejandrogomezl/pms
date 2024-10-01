@@ -46,7 +46,7 @@ const ReservationsInd = () => {
       if (endDate) params.endDate = endDate;
       if (apartmentId) params.apartmentId = apartmentId;
 
-      const response = await axios.get('http://localhost:3000/api/reservations/res', { params });
+      const response = await axios.get('http://localhost:3000/api/reservations', { params });
 
       setReservations(response.data.reservations);
       setTotalReservations(response.data.totalReservations);

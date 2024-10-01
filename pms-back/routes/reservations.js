@@ -1,230 +1,150 @@
-// routes/reservations.js
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
 const Counter = require('../models/Counter');
 
+// Middleware para validar ObjectId
+const validateObjectId = (req, res, next) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'El ID proporcionado no es válido' });
+  }
+  next();
+};
+
+// Función centralizada para manejar errores
+const handleErrors = (res, error, message = 'Error del servidor') => {
+  console.error(message, error);
+  return res.status(500).json({ message, error: error.message });
+};
+
+// Generar nuevo ID de reserva
 const getNextReservationId = async () => {
   const counter = await Counter.findOneAndUpdate(
     { id: 'reservationId' },
     { $inc: { seq: 1 } },
-    { new: true, upsert: true } // 'upsert' crea el documento si no existe
+    { new: true, upsert: true }
   );
-
-  if (!counter) {
-    throw new Error('Error creating or accessing the counter for reservationId');
-  }
-
+  if (!counter) throw new Error('Error creando o accediendo al contador de reservationId');
   return counter.seq;
 };
 
-const generateSecretCode = () => {
-  return Math.floor(100000 + Math.random() * 900000);
-};
+// Generar código secreto
+const generateSecretCode = () => Math.floor(100000 + Math.random() * 900000);
 
-router.post('/', async (req, res) => {
-  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni, platform, price } = req.body;
+// Crear o actualizar reserva
+const createOrUpdateReservation = async (req, res, isUpdate = false) => {
+  const { apartmentId, startDate, endDate, firstName, lastName, phoneNumber, dni, platform = 'Direct', price } = req.body;
+  const { id } = req.params; // Solo para update
 
-  // Convertir las fechas de string a objetos Date
   const start = new Date(startDate);
   const end = new Date(endDate);
-
-  if (!apartmentId || !start || !end || !firstName || !lastName || !phoneNumber || !dni) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
-
-  // Validar que la plataforma sea válida
   const allowedPlatforms = ['Booking', 'Airbnb', 'Direct', 'Other'];
-  if (platform && !allowedPlatforms.includes(platform)) {
-    return res.status(400).json({ error: 'Invalid platform' });
+
+  if (!apartmentId || !start || !end || !firstName || !lastName || !phoneNumber || !dni || (platform && !allowedPlatforms.includes(platform))) {
+    return res.status(400).json({ error: 'Datos inválidos' });
   }
 
   try {
-    // Modificar la consulta para permitir reservas en la misma fecha de finalización o inicio de otra reserva
     const overlappingReservation = await Reservation.findOne({
-      apartmentId: apartmentId,
+      apartmentId,
       $or: [
-        // Caso donde las reservas se solapan (excepto el último día)
-        {
-          $and: [
-            { startDate: { $lt: end } }, // La reserva existente empieza antes del final de la nueva reserva
-            { endDate: { $gt: start } }, // La reserva existente termina después del inicio de la nueva reserva
-          ]
-        },
-      ]
+        { $and: [{ startDate: { $lt: end } }, { endDate: { $gt: start } }] },
+      ],
+      ...(isUpdate && { _id: { $ne: id } }), // Excluir la reserva actual al editar
     });
 
     if (overlappingReservation) {
-      return res.status(400).json({ error: 'Apartment is already booked for the given dates' });
+      return res.status(400).json({ error: 'Apartamento ya reservado para las fechas seleccionadas' });
     }
 
-    const reservationId = await getNextReservationId();
-    const secretCode = generateSecretCode();
-
-    // Crear la reserva si no hay solapamiento
-    const reservation = new Reservation({
-      reservationId,
-      apartmentId,
-      startDate: start,
-      endDate: end,
-      firstName,
-      lastName,
-      phoneNumber,
-      dni,
-      secretCode,
-      platform: platform || 'Direct',
-      price
-    });
-    await reservation.save();
-    res.status(201).json({ message: 'Reservation created', reservation });
+    if (isUpdate) {
+      const updatedReservation = await Reservation.findByIdAndUpdate(
+        id,
+        { apartmentId, startDate: start, endDate: end, firstName, lastName, phoneNumber, dni, platform, price },
+        { new: true }
+      );
+      return res.json({ message: 'Reserva actualizada correctamente', reservation: updatedReservation });
+    } else {
+      const reservationId = await getNextReservationId();
+      const secretCode = generateSecretCode();
+      const reservation = new Reservation({
+        reservationId,
+        apartmentId,
+        startDate: start,
+        endDate: end,
+        firstName,
+        lastName,
+        phoneNumber,
+        dni,
+        platform,
+        secretCode,
+        price,
+      });
+      await reservation.save();
+      return res.status(201).json({ message: 'Reserva creada correctamente', reservation });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return handleErrors(res, error, 'Error creando o actualizando la reserva');
   }
-});
+};
 
+// Ruta para crear una reserva
+router.post('/', (req, res) => createOrUpdateReservation(req, res));
 
+// Ruta para actualizar una reserva
+router.put('/:id', validateObjectId, (req, res) => createOrUpdateReservation(req, res, true));
+
+// Obtener todas las reservas o buscar por fechas y apartmentId
 router.get('/', async (req, res) => {
   try {
-    const reservations = await Reservation.find().populate('apartmentId', 'name'); // Asegúrate de que esta función sea válida
-    res.json(reservations);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-
-// routes/reservations.js
-router.get('/res', async (req, res) => {
-  try {
     const { apartmentId, startDate, endDate, page = 1, limit = 10, sortBy = 'startDate', sortOrder = 'desc' } = req.query;
+    const query = { ...(apartmentId && { apartmentId }) };
 
-    // Construir la consulta basada en los parámetros de fecha y apartmentId
-    const query = {};
-    if (apartmentId) {
-      query.apartmentId = apartmentId; // Filtrar por apartmentId si está presente
-    }
-
-    if (startDate && !endDate) {
+    if (startDate && endDate) {
       query.startDate = { $gte: new Date(startDate) };
-    } else if (!startDate && endDate) {
       query.endDate = { $lte: new Date(endDate) };
-    } else if (startDate && endDate) {
+    } else if (startDate) {
       query.startDate = { $gte: new Date(startDate) };
+    } else if (endDate) {
       query.endDate = { $lte: new Date(endDate) };
     }
 
-    // Contar el número total de reservas que coinciden con la consulta
     const totalReservations = await Reservation.countDocuments(query);
-
-    // Ordenar por el campo especificado y en la dirección especificada
-    const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === 'asc' ? 1 : -1;
-
-    // Obtener las reservas paginadas
+    const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
     const reservations = await Reservation.find(query)
       .populate('apartmentId', 'name')
       .sort(sortOptions)
-      .skip((page - 1) * limit) // Salta las reservas para la paginación
-      .limit(parseInt(limit));  // Limita el número de resultados
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
 
-    // Devolver las reservas y el número total de reservas
     res.json({ reservations, totalReservations });
   } catch (error) {
-    console.error('Error fetching reservations:', error);
-    res.status(500).send('Error del servidor');
+    handleErrors(res, error, 'Error obteniendo reservas');
   }
 });
 
-
-
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
+// Obtener reserva por ID
+router.get('/:id', validateObjectId, async (req, res) => {
   try {
-    // Buscar la reserva por _id
-    const reservation = await Reservation.findById(id).populate('apartmentId', 'name');
-    
-    if (!reservation) {
-      return res.status(404).json({ message: 'Reserva no encontrada' });
-    }
-
+    const reservation = await Reservation.findById(req.params.id).populate('apartmentId', 'name');
+    if (!reservation) return res.status(404).json({ message: 'Reserva no encontrada' });
     res.json(reservation);
   } catch (error) {
-    console.error('Error al obtener la reserva:', error); // Mostrar el error detallado en la consola
-    res.status(500).json({ message: 'Error del servidor', error: error.message });
+    handleErrors(res, error, 'Error obteniendo reserva');
   }
 });
 
-
-
-router.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, startDate, endDate, phoneNumber, dni, platform } = req.body;
-
-  // Verificar si el ID tiene el formato correcto de ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'El ID proporcionado no es válido' });
-  }
-
-  // Convertir las fechas de string a objetos Date
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  if (!firstName || !lastName || !start || !end || !phoneNumber || !dni) {
-    return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-  }
-
-  // Validar que la plataforma sea válida
-  const allowedPlatforms = ['Booking', 'Airbnb', 'Direct', 'Other'];
-  if (platform && !allowedPlatforms.includes(platform)) {
-    return res.status(400).json({ message: 'Invalid platform' });
-  }
-
+// Eliminar reserva
+router.delete('/:id', validateObjectId, async (req, res) => {
   try {
-    // Actualizar la reserva basada en el _id
-    const updatedReservation = await Reservation.findByIdAndUpdate(
-      id,
-      { firstName, lastName, startDate: start, endDate: end, phoneNumber, dni, platform: platform || 'Direct' },
-      { new: true }
-    );
-
-    if (!updatedReservation) {
-      return res.status(404).json({ message: 'Reserva no encontrada' });
-    }
-
-    res.json({ message: 'Reserva actualizada correctamente', reservation: updatedReservation });
-  } catch (error) {
-    console.error('Error al actualizar la reserva:', error);
-    res.status(500).json({ message: 'Error del servidor', error: error.message });
-  }
-});
-
-
-
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  // Verificar si el ID tiene el formato correcto de ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'El ID proporcionado no es válido' });
-  }
-
-  try {
-    // Eliminar la reserva basada en el _id
-    const deletedReservation = await Reservation.findByIdAndDelete(id);
-
-    if (!deletedReservation) {
-      return res.status(404).json({ message: 'Reserva no encontrada' });
-    }
-
+    const deletedReservation = await Reservation.findByIdAndDelete(req.params.id);
+    if (!deletedReservation) return res.status(404).json({ message: 'Reserva no encontrada' });
     res.json({ message: 'Reserva eliminada correctamente' });
   } catch (error) {
-    console.error('Error al eliminar la reserva:', error);
-    res.status(500).json({ message: 'Error del servidor', error: error.message });
+    handleErrors(res, error, 'Error eliminando reserva');
   }
 });
-
-
 
 module.exports = router;
