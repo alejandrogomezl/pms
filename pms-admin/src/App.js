@@ -4,6 +4,7 @@ import './css/custom.scss';
 import { BrowserRouter as Router, Route, Routes, UNSAFE_DataRouterStateContext } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import EditApartmentPage from './pages/EditApartmentPage';
@@ -37,6 +38,7 @@ function App() {
         <Route path="/devices/:apartmentId" element={<Devices />} />
         {/* Añadir las rutas para Documentos, Acceso y Configuración */}
       </Routes>
+      <Footer />
     </Router>
   );
 }

@@ -6,6 +6,8 @@ import 'jspdf-autotable';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import logo from '../img/logo.png'; // Importa la imagen local
+
 
 const BillPage = () => {
   const { reservationId } = useParams(); 
@@ -32,27 +34,67 @@ const BillPage = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    // Añadir el título de la factura
-    doc.setFontSize(18);
-    doc.text('Factura de Reserva', 14, 22);
-
-    if (reservation) {
-      // Información de la reserva
-      doc.setFontSize(12);
-      doc.text(`Reserva ID: ${reservation.reservationId}`, 14, 32);
-      doc.text(`Nombre: ${reservation.firstName} ${reservation.lastName}`, 14, 42);
-      doc.text(`Teléfono: ${reservation.phoneNumber}`, 14, 52);
-      doc.text(`DNI: ${reservation.dni}`, 14, 62);
-      doc.text(`Fecha de Llegada: ${new Date(reservation.startDate).toLocaleDateString()}`, 14, 72);
-      doc.text(`Fecha de Salida: ${new Date(reservation.endDate).toLocaleDateString()}`, 14, 82);
-      doc.text(`Apartamento: ${reservation.apartmentId.name}`, 14, 92);
-
-      // Total de la factura
-      doc.text(`Total: €${calculateTotal(reservation)}`, 14, 102);
-    }
-
-    // Guardar el PDF con un nombre personalizado
-    doc.save(`factura_reserva_${reservationId}.pdf`);
+    
+    // Convertir imagen local a base64 y añadirla al PDF
+    const img = new Image();
+    img.src = logo; // Importamos la imagen
+    img.onload = () => {
+      doc.addImage(img, 'PNG', 65, 26, 80, 20); // Añadir la imagen al PDF tras cargarse
+  
+      // Continuar con el resto del contenido del PDF solo después de cargar la imagen
+      // Datos de la factura
+      doc.setFont('helvetica', 'bold');
+      doc.text('FACTURA', 14, 60);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Nº: ${reservation.reservationId || '----'}`, 14, 66);
+      doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 72);
+  
+      // Detalles de la reserva
+      doc.setFont('helvetica', 'bold');
+      doc.text('Reserva:', 14, 84);
+      doc.text('Habitación:', 14, 90);
+      doc.text('Nombre:', 14, 96);
+      doc.text('DNI:', 14, 102);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${reservation.apartmentId.name || '----'}`, 45, 90);
+      doc.text(`${reservation.firstName} ${reservation.lastName}`, 45, 96);
+      doc.text(`${reservation.dni || '----'}`, 45, 102);
+  
+      // Fechas de entrada y salida
+      doc.setFont('helvetica', 'bold');
+      doc.text('Alojamiento', 14, 112);
+      doc.setLineWidth(0.5);
+      doc.line(14, 115, 200, 115);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Entrada: ${new Date(reservation.startDate).toLocaleDateString()}`, 14, 122);
+      doc.text(`Salida: ${new Date(reservation.endDate).toLocaleDateString()}`, 14, 128);
+  
+      // Precio y otros detalles
+      const itemHeight = 138;
+      doc.text('Total días:', 14, itemHeight);
+      doc.text('2', 45, itemHeight);
+      doc.text(`Total: €${calculateTotal(reservation)}`, 45, itemHeight + 6);
+  
+      // Total final
+      doc.setFont('helvetica', 'bold');
+      doc.text('Total factura:', 14, itemHeight + 30);
+      doc.text(`€${calculateTotal(reservation)}`, 45, itemHeight + 30);
+  
+      // IVA
+      const vat = (calculateTotal(reservation) * 0.045).toFixed(2); // 4.5% VAT
+      doc.text(`IVA (4.5%): €${vat}`, 14, itemHeight + 36);
+  
+      // Total con IVA
+      const totalWithVAT = (calculateTotal(reservation) + parseFloat(vat)).toFixed(2);
+      doc.text(`Total con IVA: €${totalWithVAT}`, 14, itemHeight + 42);
+  
+      // Mensaje de despedida
+      doc.setFont('helvetica', 'bold');
+      doc.text('Gracias por su visita.', 105, 290, null, null, 'center');
+  
+      // Guardar el PDF con un nombre personalizado
+      doc.save(`factura_reserva_${reservation.reservationId || 'sin_id'}.pdf`);
+    };
   };
 
   // Función para calcular el total de la reserva
@@ -64,6 +106,7 @@ const BillPage = () => {
     const pricePerNight = 100; 
     return nights * pricePerNight;
   };
+
 
   if (loading) {
     return (
