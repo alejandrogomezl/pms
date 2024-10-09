@@ -7,10 +7,14 @@ const deviceSchema = new Schema({
     required: true,
     unique: true // Cada dispositivo tiene un ID único
   },
+  name: {
+    type: String,
+    required: true
+  },
   apartmentId: {
     type: Schema.Types.ObjectId,
     ref: 'Apartment', // Referencia al modelo de apartamentos
-    required: false
+    required: true
   },
   deviceType: {
     type: String,

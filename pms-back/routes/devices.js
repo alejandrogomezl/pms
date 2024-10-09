@@ -5,11 +5,12 @@ const { getToken } = require('../services/tuyaService'); // Importar el servicio
 
 // Crear un nuevo dispositivo
 router.post('/', async (req, res) => {
-  const { deviceId, apartmentId, deviceType, lockCodes, state, thermostat } = req.body;
+  const { deviceId, name, apartmentId, deviceType, lockCodes, state, thermostat } = req.body;
 
   try {
     const newDevice = new Device({
       deviceId,
+      name,
       apartmentId,
       deviceType,
       lockCodes,
