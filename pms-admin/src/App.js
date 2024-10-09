@@ -16,27 +16,122 @@ import Details from './pages/Details';
 import BillPage from './pages/BillPage';
 import CalendarPage from './pages/Calendar';
 import Devices from './pages/Devices';
+import LoginPage from './pages/LoginPage';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        {/* <Route path="/dashboard" element={<Dashboard />} />*/}
-        < Route path="/" element={<Dashboard />} />
-        < Route path="/apartments" element={< ApartmentsPage />} />
-        < Route path="/documents" element={<h1>Documentos</h1>} />
-        < Route path="/access" element={<h1>Acceso</h1>} />
-        < Route path="/settings" element={<Settings />} />
-        < Route path="/reservations/:apartmentId" Component={ReservationsInd} />
-        < Route path="/price/:apartmentId" Component={Price} />
-        < Route path="/edit/:id" Component={EditApartmentPage} />
-        < Route path="/create-apartment" element={<CreateApartmentPage />} />
-        <Route path="/details/:reservationId" element={<Details />} /> 
-        <Route path="/bill/:reservationId" element={<BillPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/devices/:apartmentId" element={<Devices />} />
-        {/* Añadir las rutas para Documentos, Acceso y Configuración */}
+        {/* Ruta pública para login */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Rutas privadas */}
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/apartments"
+          element={
+            <PrivateRoute>
+              <ApartmentsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/documents"
+          element={
+            <PrivateRoute>
+              <h1>Documentos</h1>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/access"
+          element={
+            <PrivateRoute>
+              <h1>Acceso</h1>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/reservations/:apartmentId"
+          element={
+            <PrivateRoute>
+              <ReservationsInd />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/price/:apartmentId"
+          element={
+            <PrivateRoute>
+              <Price />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditApartmentPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/create-apartment"
+          element={
+            <PrivateRoute>
+              <CreateApartmentPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/details/:reservationId"
+          element={
+            <PrivateRoute>
+              <Details />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/bill/:reservationId"
+          element={
+            <PrivateRoute>
+              <BillPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <PrivateRoute>
+              <CalendarPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/devices/:apartmentId"
+          element={
+            <PrivateRoute>
+              <Devices />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer />
     </Router>
