@@ -56,7 +56,6 @@ async function getToken() {
       throw new Error(`Error obtaining token: ${login.msg}`);
     }
     token = login.result.access_token;
-    console.log('Token obtained:', token);
     return token;  // Return the token
   } catch (error) {
     console.error('Error fetching token:', error.message);
@@ -68,7 +67,6 @@ async function getToken() {
 (async () => {
   try {
     const token = await getToken();
-    console.log(`Successfully fetched token: ${token}`);
   } catch (err) {
     console.error(err);
   }

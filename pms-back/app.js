@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -23,6 +24,7 @@ const settingsRoutes = require('./routes/settings');
 const pricesRoutes = require('./routes/prices')
 const reservationFieldsRoutes = require('./routes/reservationFields');
 const devicesRoutes = require('./routes/devices');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/apartments', apartmentRoutes);  // Asegúrate de que esto está configurado
@@ -31,6 +33,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/prices', pricesRoutes);
 app.use('/api/reservation-fields', reservationFieldsRoutes);
 app.use('/api/devices', devicesRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
